@@ -1,0 +1,68 @@
+version: "3.8"
+services:
+
+  home-service:
+    build: ./
+    container_name: app-instance
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    networks:
+      - app-tier
+
+  postgres:
+    container_name: postgres
+    image: postgres:14.8-alpine3.18
+    environment:
+      POSTGRES_DB: "home-service"
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "admin"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ../2. Init Database:/docker-entrypoint-initdb.d
+      - home-service-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U habrpguser -d habrdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+    networks:
+      - app-tier
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4:8.10
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@mail.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - app-tier
+
+networks:
+  app-tier:
+    driver: bridge
+
+volumes:
+  home-service-data:
+  pgadmin-data:
