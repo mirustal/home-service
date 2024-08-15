@@ -2,19 +2,21 @@ package logger
 
 import (
 	"context"
-	"log"
 	"log/slog"
 	"net/http"
 	"os"
 )
 
-var Logger *slog.Logger
 
+type Logger struct {
+	Log *slog.Logger
+}
 
-func LogInit(modeLog string) {
+func LogInit(modeLog string) *Logger {
 	var handler slog.Handler
-
+	var logger *slog.Logger
 	switch modeLog {
+
 	case "debug":
 		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug})
 	case "jsonDebug":
@@ -22,11 +24,15 @@ func LogInit(modeLog string) {
 	case "jsonInfo":
 		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo})
 	default:
-		log.Fatal("no init modeLog: ", modeLog)
+		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug})
 	}
 
-	Logger = slog.New(handler)
-	slog.SetDefault(Logger)
+	logger = slog.New(handler)
+	slog.SetDefault(logger)
+
+	return &Logger{
+		Log: logger,
+	}
 }
 
 
@@ -38,8 +44,8 @@ func Err(err error) slog.Attr {
 }
 
 
-func LogRequest(r *http.Request, requestID string) {
-	Logger.Info("Incoming request",
+func (l *Logger) LogRequest(r *http.Request, requestID string) {
+	l.Log.Info("Incoming request",
 		slog.String("request_id", requestID),
 		slog.String("method", r.Method),
 		slog.String("path", r.URL.Path),
@@ -48,7 +54,7 @@ func LogRequest(r *http.Request, requestID string) {
 }
 
 
-func LogResponse(r *http.Request, status int, requestID string, responseBody string) {
+func (l *Logger) LogResponse(r *http.Request, status int, requestID string, responseBody string) {
 	level := slog.LevelInfo
 	if status >= 400 && status < 500 {
 		level = slog.LevelWarn
@@ -56,7 +62,7 @@ func LogResponse(r *http.Request, status int, requestID string, responseBody str
 		level = slog.LevelError
 	}
 
-	Logger.Log(context.Background(), level, "Response",
+	l.Log.Log(context.Background(), level, "Response",
 		slog.String("request_id", requestID),
 		slog.String("method", r.Method),
 		slog.String("path", r.URL.Path),
@@ -66,9 +72,9 @@ func LogResponse(r *http.Request, status int, requestID string, responseBody str
 }
 
 
-func LogError(ctx context.Context, err error) {
+func (l *Logger) LogError(ctx context.Context, err error) {
 	requestID := ctx.Value("request_id").(string)
-	Logger.Error("An error occurred",
+	l.Log.Error("An error occurred",
 		Err(err),
 		slog.String("request_id", requestID),
 	)

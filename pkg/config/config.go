@@ -2,12 +2,14 @@ package config
 
 import (
 	"errors"
+	"flag"
+	"fmt"
 	"log"
 
 	"github.com/spf13/viper"
 )
 
-type DB struct {
+type DBConfig struct {
 	Host     string `yaml:"host"`
 	Port     int    `yaml:"port"`
 	User     string `yaml:"user"`
@@ -15,12 +17,15 @@ type DB struct {
 	Name     string `yaml:"name"`
 }
 
-
+type GRPCConfig struct {
+	Port           int `yaml:"port"`
+	TimeoutConnect int `yaml:"timeout"`
+}
 
 type Config struct {
-	ModeLog    string `yaml:"modelog"`
-	ServerPort string `yaml:"serverport"`
-	DB         *DB    `yaml:"db"`
+	ModeLog string      `yaml:"modelog" env-default:"debug"`
+	GRPC    *GRPCConfig `yaml:"serverport"`
+	DB      *DBConfig   `yaml:"db"`
 }
 
 func LoadConfig(fileName, fileType string) (*Config, error) {
@@ -45,4 +50,13 @@ func LoadConfig(fileName, fileType string) (*Config, error) {
 	}
 
 	return cfg, nil
+}
+
+func fetchConfig() string {
+	var res string
+	flag.StringVar(&res, "config", "", "path to config file")
+	fmt.Println(res)
+	flag.Parse()
+
+	return res
 }
