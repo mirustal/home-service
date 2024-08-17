@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package home;
+option go_package = "../../pkg/pb";
+
+import "api/home/flats-in-house.proto";
+
+message UpdateFlatRequest {
+    int32 id = 1 [json_name = "id"];
+    Status status = 4 [json_name = "status"];
+}
+
+message UpdateFlatResponse {
+    int32 id = 1 [json_name = "id"];
+    int32 house_id = 2 [json_name = "house_id"];
+    int32 price = 3 [json_name = "price"];
+    int32 rooms = 4 [json_name = "rooms"];
+    Status status = 5 [json_name = "status"];
+}

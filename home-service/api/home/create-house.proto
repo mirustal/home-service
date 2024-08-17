@@ -4,17 +4,17 @@ package home;
 option go_package = "../../pkg/pb";
 
 message CreateHouseRequest {
-    string address = 1 [json_name = "address"];
-    int32 year = 2 [json_name = "year"];
-    string developer = 3 [json_name = "developer"];
+    string address = 1;
+    int32 year = 2;
+    string developer = 3;
 }
 
 message CreateHouseResponse {
-    int32 id = 1 [json_name = "id"];
-    string address = 2 [json_name = "address"];
-    int32 year = 3 [json_name = "year"];
-    string developer = 4 [json_name = "developer"];
-    string created_at = 5 [json_name = "created_at"];
-    string updated_at = 6 [json_name = "updated_at"];
+    int32 id = 1;
+    string address = 2;
+    int32 year = 3;
+    string developer = 4;
+    string created_at = 5;
+    string updated_at = 6;
 }
 

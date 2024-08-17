@@ -1,0 +1,15 @@
+modelog: debug
+serverport: 8081
+
+
+grpc:
+  portauth: "localhost:9001"
+  porthomes: "localhost:9002"
+  timeout: "5s"
+
+db:
+  host: "0.0.0.0"
+  port: 5432
+  user: "admin"
+  password: "admin"
+  name: "home-service"
