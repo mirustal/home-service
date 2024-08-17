@@ -8,6 +8,10 @@ message GetFlatsInHouseRequest {
 }
 
 message GetFlatsInHouseResponse {
+   repeated Flat flats = 1 [json_name = "flats"]; 
+}
+
+message Flat {
     int32 id = 1 [json_name = "id"];
     int32 house_id = 2 [json_name = "house_id"];
     int32 price = 3 [json_name = "price"];
