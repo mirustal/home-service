@@ -3,7 +3,6 @@ package dbErr
 import "errors"
 
 var (
-	ErrUserExists   = errors.New("user already exists")
-	ErrUserNotFound = errors.New("user not found")
-	ErrAppNotFound  = errors.New("app not found")
+	ErrHouseNotFound = errors.New("house not found")
+	ErrFlatNotFound  = errors.New("flat not found")
 )
