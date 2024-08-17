@@ -18,7 +18,7 @@ type DbPostgres struct {
 	log *slog.Logger
 }
 
-func New(ctx context.Context, cfg *config.DBConfig, log *slog.Logger) (*DbPostgres, error) {
+func New(ctx context.Context, cfg *config.PostgresConfig, log *slog.Logger) (*DbPostgres, error) {
 	op := "adapters.db.postgres.New"
 
 	var err error
@@ -74,7 +74,7 @@ func New(ctx context.Context, cfg *config.DBConfig, log *slog.Logger) (*DbPostgr
 
 
 
-func createConnString(cfg *config.DBConfig) string {
+func createConnString(cfg *config.PostgresConfig) string {
 	return fmt.Sprintf("postgresql://%s:%s@%s:%d/%s",
 		cfg.User,
 		cfg.Password,

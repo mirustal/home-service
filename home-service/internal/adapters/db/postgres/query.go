@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/lib/pq"
 
 	dbErr "home-service/internal/adapters/db"
 	"home-service/internal/models"
@@ -20,100 +18,213 @@ func (pg *DbPostgres) Ping(ctx context.Context) error {
 	return pg.db.Ping(ctx)
 }
 
-func (pg *DbPostgres) GetUser(ctx context.Context, userID string) (models.User, error) {
-	const op = "postgres.GetUser"
+func (pg *DbPostgres) CreateHouse(ctx context.Context, address string, year int, developer string) (int, error) {
+	const op = "postgres.CreateHouse"
+
+	tx, err := pg.db.Begin(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("%s: failed to begin tx: %w", op, err)
+	}
+	defer tx.Rollback(ctx)
 
 	query := `
-        SELECT users.id,
-               users.email,
-               users.password_hashed,
-               users.user_type,
-               users.created_at,
-               users.updated_at
-        FROM users
-        WHERE id = $1
-        LIMIT 1;
-    `
-	var user models.User
+		INSERT INTO houses (address, year, developer, created_at, updated_at)
+		VALUES ($1, $2, $3, NOW(), NOW())
+		RETURNING id;
+	`
 
-	err := pg.db.QueryRow(ctx, query, userID).Scan(
-		&user.ID,
-		&user.Email,
-		&user.HashPass,
-		&user.Type,
-		&user.CreatedAt,
-		&user.UpdatedAt,
+	var houseID int
+	err = tx.QueryRow(ctx, query, address, year, developer).Scan(&houseID)
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return 0, fmt.Errorf("%s: failed to commit tx: %w", op, err)
+	}
+
+	return houseID, nil
+}
+
+func (pg *DbPostgres) CreateFlat(ctx context.Context, houseID, price, rooms int) (int, error) {
+	const op = "postgres.CreateFlat"
+
+	tx, err := pg.db.Begin(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("%s: failed to begin tx: %w", op, err)
+	}
+	defer tx.Rollback(ctx)
+
+	query := `
+		INSERT INTO flats (house_id, price, rooms, status, created_at, updated_at)
+		VALUES ($1, $2, $3, 'created', NOW(), NOW())
+		RETURNING id;
+	`
+
+	var flatID int
+	err = tx.QueryRow(ctx, query, houseID, price, rooms).Scan(&flatID)
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return 0, fmt.Errorf("%s: failed to commit tx: %w", op, err)
+	}
+
+	return flatID, nil
+}
+
+func (pg *DbPostgres) UpdateFlatStatus(ctx context.Context, flatID int, status string) (models.Flat, error) {
+	const op = "postgres.UpdateFlatStatus"
+
+	var flat models.Flat
+
+	tx, err := pg.db.Begin(ctx)
+	if err != nil {
+		return flat, fmt.Errorf("%s: failed to begin tx: %w", op, err)
+	}
+	defer tx.Rollback(ctx)
+
+	query := `
+		UPDATE flats
+		SET status = $1, updated_at = NOW()
+		WHERE id = $2
+		RETURNING id, house_id, price, rooms, status, created_at, updated_at;
+	`
+
+	err = tx.QueryRow(ctx, query, status, flatID).Scan(
+		&flat.ID,
+		&flat.HouseID,
+		&flat.Price,
+		&flat.Rooms,
+		&flat.Status,
+		&flat.CreatedAt,
+		&flat.UpdatedAt,
+	)
+	if err != nil {
+		return flat, fmt.Errorf("%s: failed to update flat status: %w", op, err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return flat, fmt.Errorf("%s: failed to commit tx: %w", op, err)
+	}
+
+	return flat, nil
+}
+
+
+func (pg *DbPostgres) GetFlatByID(ctx context.Context, flatID int) (models.Flat, error) {
+	const op = "postgres.GetFlatByID"
+
+	var flat models.Flat
+
+	query := `
+		SELECT id, house_id, price, rooms, status, created_at, updated_at
+		FROM flats
+		WHERE id = $1;
+	`
+
+	err := pg.db.QueryRow(ctx, query, flatID).Scan(
+		&flat.ID,
+		&flat.HouseID,
+		&flat.Price,
+		&flat.Rooms,
+		&flat.Status,
+		&flat.CreatedAt,
+		&flat.UpdatedAt,
+	)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return flat, fmt.Errorf("%s: flat not found: %w", op, err)
+		}
+		return flat, fmt.Errorf("%s: failed to get flat by ID: %w", op, err)
+	}
+
+	return flat, nil
+}
+
+
+func (pg *DbPostgres) GetHouse(ctx context.Context, houseID int) (models.House, error) {
+	const op = "postgres.GetHouse"
+
+	query := `
+		SELECT id, address, year, developer, created_at, updated_at
+		FROM houses
+		WHERE id = $1
+		LIMIT 1;
+	`
+
+	var house models.House
+	err := pg.db.QueryRow(ctx, query, houseID).Scan(
+		&house.ID,
+		&house.Address,
+		&house.Year,
+		&house.Developer,
+		&house.CreatedAt,
+		&house.UpdatedAt,
 	)
 	if err == pgx.ErrNoRows {
-		return user, dbErr.ErrUserNotFound
+		return house, dbErr.ErrHouseNotFound
 	} else if err != nil {
-		return user, fmt.Errorf("%s: %w", op, err)
+		return house, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return user, nil
+	return house, nil
 }
 
-func (pg *DbPostgres) SaveUser(ctx context.Context, email string, passHash []byte, userType string) (string, error) {
-	const op = "postgres.SaveUser"
-	var id uuid.UUID
-
-	tx, err := pg.db.Begin(ctx)
-	if err != nil {
-		return "", fmt.Errorf("%s: %w", op, err)
-	}
-	defer tx.Rollback(ctx)
+func (pg *DbPostgres) GetFlatsByHouseID(ctx context.Context, houseID int, includeAll bool) ([]models.Flat, error) {
+	const op = "postgres.GetFlatsByHouseID"
 
 	query := `
-        INSERT INTO users (email, password_hashed, user_type) 
-        VALUES ($1, $2, $3) 
-        RETURNING id;
-    `
-	err = tx.QueryRow(ctx, query, email, passHash, userType).Scan(&id)
+		SELECT id, house_id, price, rooms, status, created_at, updated_at
+		FROM flats
+		WHERE house_id = $1
+	`
+	if !includeAll {
+		query += " AND status = 'approved'"
+	}
+
+	rows, err := pg.db.Query(ctx, query, houseID)
 	if err != nil {
-		if err, ok := err.(*pq.Error); ok && err.Code == "23505" {
-			return "", dbErr.ErrUserExists
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	var flats []models.Flat
+	for rows.Next() {
+		var flat models.Flat
+		err := rows.Scan(
+			&flat.ID,
+			&flat.HouseID,
+			&flat.Price,
+			&flat.Rooms,
+			&flat.Status,
+			&flat.CreatedAt,
+			&flat.UpdatedAt,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
 		}
-		return "", fmt.Errorf("%s: %w", op, err)
+		flats = append(flats, flat)
 	}
 
-	if err = tx.Commit(ctx); err != nil {
-		return "", fmt.Errorf("%s: %w", op, err)
-	}
-
-	return id.String(), nil
+	return flats, nil
 }
 
-func (pg *DbPostgres) SaveRefreshToken(ctx context.Context, refreshToken string, uid uuid.UUID) error {
-	const op = "postgres.SaveRefreshToken"
-
-	tx, err := pg.db.Begin(ctx)
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-	defer tx.Rollback(ctx)
+func (pg *DbPostgres) SubscribeToHouse(ctx context.Context, houseID int, email string) (int, error) {
+	const op = "postgres.SubscribeToHouse"
 
 	query := `
-        UPDATE refresh_tokens
-        SET is_valid = false
-        WHERE user_id = $1;
-    `
-	_, err = tx.Exec(ctx, query, uid)
+		INSERT INTO subscriptions (house_id, email, created_at)
+		VALUES ($1, $2, NOW())
+		RETURNING id;
+	`
+
+	var subscriptionID int
+	err := pg.db.QueryRow(ctx, query, houseID, email).Scan(&subscriptionID)
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	query = `
-        INSERT INTO refresh_tokens (token, user_id)
-        VALUES ($1, $2);
-    `
-	_, err = tx.Exec(ctx, query, refreshToken, uid)
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	if err = tx.Commit(ctx); err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	return nil
+	return subscriptionID, nil
 }
