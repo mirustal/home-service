@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-type DBConfig struct {
+type PostgresConfig struct {
 	Host     string `yaml:"host"`
 	Port     int    `yaml:"port"`
 	User     string `yaml:"user"`
@@ -19,13 +19,20 @@ type DBConfig struct {
 
 type GRPCConfig struct {
 	Port           int `yaml:"port"`
-	TimeoutConnect int `yaml:"timeout"`
+}
+
+type RedisConfig struct {
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	Password string `yaml:"password"`
+	Name     string `yaml:"name"`
 }
 
 type Config struct {
 	ModeLog string      `yaml:"modelog" env-default:"debug"`
 	GRPC    *GRPCConfig `yaml:"grpc"`
-	DB      *DBConfig   `yaml:"db"`
+	PostgresDB      *PostgresConfig   `yaml:"postgresdb"`
+	RedisDB	*RedisConfig `yaml"redisdb"`
 }
 
 func LoadConfig(fileName, fileType string) (*Config, error) {
