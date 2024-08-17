@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package auth;
+option go_package = "../../pkg/pb;authgrpc";
+
+message LoginRequest {
+    string user_id = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string token = 1;
+}

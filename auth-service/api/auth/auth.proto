@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package auth;
+option go_package = "../../pkg/pb;authgrpc";
+
+import "login.proto";
+import "dummy-login.proto";
+import "register.proto";
+
+
+
+service Auth {
+    rpc Register (RegisterRequest) returns (RegisterResponse);
+    rpc Login (LoginRequest) returns (LoginResponse);
+    rpc DummyLogin(DummyLoginRequest) returns (DummyLoginResponse);
+}
