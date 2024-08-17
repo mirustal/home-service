@@ -4,7 +4,7 @@ import (
 	"log/slog"
 
 	"auth-service/internal/adapters/db/postgres"
-	"auth-service/internal/app/grpc"
+	"auth-service/internal/app/grpc/auth"
 	"auth-service/internal/services/auth"
 	"auth-service/pkg/config"
 )
