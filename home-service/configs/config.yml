@@ -1,13 +1,17 @@
 modelog: debug
 serverport: 8081
 
-db:
+postgresdb:
   host: "0.0.0.0"
   port: 5432
   user: "admin"
   password: "admin"
   name: "home-service"
 
+redisdb:
+  host: "0.0.0.0"
+  port: 6379
+  name: "name"
+
 grpc:
   port: 9002
-  timeout: 5sa

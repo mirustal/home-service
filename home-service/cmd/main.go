@@ -21,7 +21,7 @@ func main() {
 
 	logger := logger.LogInit(cfg.ModeLog)
 
-	db, err := postgres.New(context.Background(), cfg.DB, logger.Log)
+	db, err := postgres.New(context.Background(), cfg.PostgresDB, logger.Log)
 
 	app := app.New(logger.Log, cfg.GRPC, db)
 
