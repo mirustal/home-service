@@ -24,7 +24,7 @@ type GRPCConfig struct {
 
 type Config struct {
 	ModeLog string      `yaml:"modelog" env-default:"debug"`
-	GRPC    *GRPCConfig `yaml:"serverport"`
+	GRPC    *GRPCConfig `yaml:"grpc"`
 	DB      *DBConfig   `yaml:"db"`
 }
 

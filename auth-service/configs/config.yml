@@ -9,5 +9,5 @@ db:
   name: "home-service"
 
 grpc:
-  port: 11011
-  timeout: 5s
+  port: 9001
+  timeout: 5sa
