@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package home;
+option go_package = "../../pkg/pb";
+
+message SubscribeToHouseRequest {
+    int32 id = 1;
+    string email = 2;
+}
+
+message SubscribeToHouseResponse {}

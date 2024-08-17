@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package auth;
+option go_package = "../../pkg/pb";
+
+message RegisterRequest {
+    string email = 1 [json_name = "email"];  
+    string password = 2 [json_name = "password"];
+    UserType user_type = 3 [json_name = "user_type"]; 
+}
+
+message RegisterResponse {
+    string user_id = 1 [json_name = "user_id"];
+}
+
+enum UserType {
+    client = 0;
+    moderator = 1;
+}

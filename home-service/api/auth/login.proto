@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package auth;
+option go_package = "../../pkg/pb";
+
+message LoginRequest {
+    string user_id = 1 [json_name = "user_id"];
+    string password = 2 [json_name = "password"];
+}
+
+message LoginResponse {
+    string token = 1 [json_name = "token"];
+}
