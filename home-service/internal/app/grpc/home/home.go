@@ -17,8 +17,10 @@ import (
 
 type serverAPI struct {
 	pb.UnimplementedHouseServiceServer
-	home       Home
-	authClient authclient.AuthClient
+	home        Home
+	authClient  authclient.AuthClient
+	caheGetter  cacheGetter
+	cacheSetter cacheSetter
 }
 
 func Register(gRPC *grpc.Server, home Home, authCleint authclient.AuthClient) {
@@ -38,6 +40,13 @@ type Home interface {
 	UpdateFlat(ctx context.Context, id int, status string) (models.Flat, error)
 }
 
+type cacheGetter interface {
+	Get(key string) (string, string)
+}
+
+type cacheSetter interface {
+	Set(key, value string)
+}
 
 func (s *serverAPI) AuthCheck(ctx context.Context) (string, string, error) {
 	reqToken, err := ExtractAccessToken(ctx)
@@ -49,7 +58,6 @@ func (s *serverAPI) AuthCheck(ctx context.Context) (string, string, error) {
 	if err != nil {
 		return "", "", status.Error(codes.InvalidArgument, "invalid token")
 	}
-
 
 	isValid, uid, userStatus, err := s.authClient.ValidateToken(ctx, token)
 	if err != nil {
@@ -91,6 +99,6 @@ func ValidateAccessToken(token string) (string, error) {
 func IsModerator(userType string) (isModerator bool) {
 	if userType == "moderator" {
 		isModerator = true
-}
-return isModerator
+	}
+	return isModerator
 }

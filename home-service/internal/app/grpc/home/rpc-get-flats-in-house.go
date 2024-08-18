@@ -15,7 +15,7 @@ func (s *serverAPI) GetFlatsInHouse(ctx context.Context, req *pb.GetFlatsInHouse
 	if err != nil {
 		return nil, err
 	}
-	
+
 	flats, err := s.home.GetFlatsInHouse(ctx, int(req.GetId()), userType)
 	fmt.Println(flats)
 	if err != nil {
@@ -25,11 +25,11 @@ func (s *serverAPI) GetFlatsInHouse(ctx context.Context, req *pb.GetFlatsInHouse
 	var flatResponses []*pb.Flat
 	for _, flat := range flats {
 		flatResponses = append(flatResponses, &pb.Flat{
-			Id:     int32(flat.ID),
-			Price:  int32(flat.Price),
+			Id:      int32(flat.ID),
+			Price:   int32(flat.Price),
 			HouseId: int32(flat.HouseID),
-			Rooms:  int32(flat.Rooms),
-			Status: flat.Status,
+			Rooms:   int32(flat.Rooms),
+			Status:  flat.Status,
 		})
 	}
 

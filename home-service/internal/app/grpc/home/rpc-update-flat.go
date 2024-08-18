@@ -17,9 +17,9 @@ func (s *serverAPI) UpdateFlat(ctx context.Context, req *pb.UpdateFlatRequest) (
 		return nil, fmt.Errorf("%s: %v", op, err)
 	}
 
-	if !IsModerator(userType){
+	if !IsModerator(userType) {
 		return nil, fmt.Errorf("%s: %v", op, err)
-	} 
+	}
 
 	statusStr := req.GetStatus()
 	flat, err := s.home.UpdateFlat(ctx, int(req.GetId()), statusStr)

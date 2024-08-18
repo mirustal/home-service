@@ -27,14 +27,13 @@ func (s *serverAPI) CreateFlat(ctx context.Context, req *pb.CreateFlatRequest) (
 	}
 
 	return &pb.CreateFlatResponse{
-		Id:     int32(flat.ID),
-		Price:  int32(flat.Price),
+		Id:      int32(flat.ID),
+		Price:   int32(flat.Price),
 		HouseId: int32(flat.HouseID),
-		Rooms:  int32(flat.Rooms),
-		Status: flat.Status,
+		Rooms:   int32(flat.Rooms),
+		Status:  flat.Status,
 	}, nil
 }
-
 
 func (s *serverAPI) validateCreateFlatRequest(req *pb.CreateFlatRequest) error {
 	if req.HouseId <= 0 {
