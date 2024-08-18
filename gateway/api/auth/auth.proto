@@ -6,25 +6,39 @@ option go_package = "../../pkg/pb";
 import "api/auth/login.proto";
 import "api/auth/dummy-login.proto";
 import "api/auth/register.proto";
+import "api/auth/refresh-session.proto";
+import "api/auth/validate-session.proto";
 
 import "google/api/annotations.proto";
 
 service Auth {
     rpc Register (RegisterRequest) returns (RegisterResponse) {
         option (google.api.http) = {
-          post: "/v1/register"
+          post: "/register"
           body: "*"
         };
       }
       rpc Login (LoginRequest) returns (LoginResponse) {
         option (google.api.http) = {
-          post: "/v1/login"
+          post: "/login"
           body: "*"
         };
       }
     rpc DummyLogin(DummyLoginRequest) returns (DummyLoginResponse){
         option (google.api.http) = {
-            get: "/v1/dummyLogin"
+            get: "/dummyLogin"
         };
     }
+    rpc ValidateSession (ValidateRequest) returns (ValidateResponse){
+      option (google.api.http) = {
+          post: "/ValidateSession"
+          body: "*"
+      };
+  }
+    rpc RefreshSession (RefreshRequest) returns (RefreshResponse){
+      option (google.api.http) = {
+          post: "/RefreshSession"
+          body: "*"
+      };
+  }
 }

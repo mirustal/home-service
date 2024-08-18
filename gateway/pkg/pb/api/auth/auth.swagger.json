@@ -16,7 +16,71 @@
     "application/json"
   ],
   "paths": {
-    "/v1/dummyLogin": {
+    "/RefreshSession": {
+      "post": {
+        "operationId": "Auth_RefreshSession",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/authRefreshResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/authRefreshRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/ValidateSession": {
+      "post": {
+        "operationId": "Auth_ValidateSession",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/authValidateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/authValidateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/dummyLogin": {
       "get": {
         "operationId": "Auth_DummyLogin",
         "responses": {
@@ -51,7 +115,7 @@
         ]
       }
     },
-    "/v1/login": {
+    "/login": {
       "post": {
         "operationId": "Auth_Login",
         "responses": {
@@ -83,7 +147,7 @@
         ]
       }
     },
-    "/v1/register": {
+    "/register": {
       "post": {
         "operationId": "Auth_Register",
         "responses": {
@@ -128,7 +192,7 @@
     "authLoginRequest": {
       "type": "object",
       "properties": {
-        "user_id": {
+        "id": {
           "type": "string"
         },
         "password": {
@@ -140,6 +204,28 @@
       "type": "object",
       "properties": {
         "token": {
+          "type": "string"
+        }
+      }
+    },
+    "authRefreshRequest": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "refresh_token": {
+          "type": "string"
+        }
+      }
+    },
+    "authRefreshResponse": {
+      "type": "object",
+      "properties": {
+        "new_access_token": {
+          "type": "string"
+        },
+        "new_refresh_token": {
           "type": "string"
         }
       }
@@ -173,6 +259,28 @@
         "moderator"
       ],
       "default": "client"
+    },
+    "authValidateRequest": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        }
+      }
+    },
+    "authValidateResponse": {
+      "type": "object",
+      "properties": {
+        "is_valid": {
+          "type": "boolean"
+        },
+        "uid": {
+          "type": "string"
+        },
+        "user_type": {
+          "type": "string"
+        }
+      }
     },
     "googlerpcStatus": {
       "type": "object",

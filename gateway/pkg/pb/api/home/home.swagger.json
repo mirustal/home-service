@@ -249,7 +249,7 @@
           "format": "int32"
         },
         "status": {
-          "$ref": "#/definitions/homeStatus"
+          "type": "string"
         }
       }
     },
@@ -293,7 +293,7 @@
         }
       }
     },
-    "homeGetFlatsInHouseResponse": {
+    "homeFlat": {
       "type": "object",
       "properties": {
         "id": {
@@ -313,19 +313,21 @@
           "format": "int32"
         },
         "status": {
-          "$ref": "#/definitions/homeStatus"
+          "type": "string"
         }
       }
     },
-    "homeStatus": {
-      "type": "string",
-      "enum": [
-        "CREATED",
-        "APPROVED",
-        "DECLINED",
-        "ON_MODERATION"
-      ],
-      "default": "CREATED"
+    "homeGetFlatsInHouseResponse": {
+      "type": "object",
+      "properties": {
+        "flats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/homeFlat"
+          }
+        }
+      }
     },
     "homeSubscribeToHouseResponse": {
       "type": "object"
@@ -337,16 +339,8 @@
           "type": "integer",
           "format": "int32"
         },
-        "price": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "rooms": {
-          "type": "integer",
-          "format": "int32"
-        },
         "status": {
-          "$ref": "#/definitions/homeStatus"
+          "type": "string"
         }
       }
     },
@@ -370,7 +364,7 @@
           "format": "int32"
         },
         "status": {
-          "$ref": "#/definitions/homeStatus"
+          "type": "string"
         }
       }
     },

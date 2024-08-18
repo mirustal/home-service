@@ -1,4 +1,5 @@
 gen-gateway:
+	rm -f pkg/pb/*.go
 	protoc -I . \
           -I ./third-party \
 		  -I ./api/auth \

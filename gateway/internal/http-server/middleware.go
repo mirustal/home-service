@@ -1,6 +1,10 @@
 package middleware
 
-import "net/http"
+import (
+	"log/slog"
+	"net/http"
+	"time"
+)
 
 func CorsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -11,5 +15,22 @@ func CorsMiddleware(next http.Handler) http.Handler {
 			return
 		}
 		next.ServeHTTP(w, r)
+	})
+}
+
+
+
+func LoggingMiddleware(log *slog.Logger, next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		next.ServeHTTP(w, r)
+		log.Info("request",
+			"host", r.Host,
+			"method", r.Method,
+			"url", r.URL,
+			"remote_addr", r.RemoteAddr,
+			"user_agent", r.UserAgent(),
+			"duration", time.Since(start),
+		)
 	})
 }

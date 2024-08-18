@@ -2,26 +2,30 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 	"log"
-	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
 	"sync"
+	"sync/atomic"
 	"syscall"
-	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 
+	middleware "gateway/internal/http-server"
 	"gateway/internal/swagger"
 	"gateway/pkg/config"
 	"gateway/pkg/logger"
+	pbauth "gateway/pkg/pb/api/auth"
 	pbhome "gateway/pkg/pb/api/home"
-
 	runtime "github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
+
+var requestCounter uint64 
 
 func main() {
 
@@ -45,10 +49,10 @@ func main() {
 				return runtime.DefaultHeaderMatcher(headerName)
 			}
 		}),
+		runtime.WithErrorHandler(CustomErrorHandler),
 	)
 
-	fmt.Println(*cfg, "\n", *cfg.DB, "\n", *cfg.GRPC)
-	err = pb.RegisterAuthHandlerFromEndpoint(ctx, mux, cfg.GRPC.PortAuth, []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())})
+	err = pbauth.RegisterAuthHandlerFromEndpoint(ctx, mux, cfg.GRPC.PortAuth, []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())})
 	if err != nil {
 		logger.Log.Error("failed to register auth service: %v", err)
 	}
@@ -67,7 +71,7 @@ func main() {
 
 		httpServer := &http.Server{
 			Addr:    ":8080",
-			Handler: middleware.CorsMiddleware(loggingMiddleware(logger.Log, mux)),
+			Handler: middleware.CorsMiddleware(middleware.LoggingMiddleware(logger.Log, mux)),
 		}
 
 		httpServer.ListenAndServe()
@@ -85,17 +89,49 @@ func main() {
 
 }
 
-func loggingMiddleware(log *slog.Logger, next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		next.ServeHTTP(w, r)
-		log.Info("request",
-			"host", r.Host,
-			"method", r.Method,
-			"url", r.URL,
-			"remote_addr", r.RemoteAddr,
-			"user_agent", r.UserAgent(),
-			"duration", time.Since(start),
-		)
-	})
+func CustomErrorHandler(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
+	grpcStatus, ok := status.FromError(err)
+	if !ok {
+		runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, w, r, err)
+		return
+	}
+
+
+	requestID := incrementRequestCounter()
+
+	code := grpcStatus.Code()
+	errorMessage := grpcStatus.Message()
+
+	httpStatus := runtime.HTTPStatusFromCode(code)
+	w.Header().Set("Content-Type", "application/json")
+	
+	if httpStatus >= 500 && httpStatus < 600 {
+		customError := CustomErrorResponse{
+			Message:   errorMessage,  // Сообщение об ошибке из gRPC
+			RequestID: requestID,     // Идентификатор запроса
+			Code:      int(code),     // Код ошибки
+		}
+
+		if code == codes.Unavailable {
+			w.Header().Set("Retry-After", "5") 
+		}
+
+
+		w.WriteHeader(httpStatus)
+		json.NewEncoder(w).Encode(customError)
+	} else {
+		w.WriteHeader(httpStatus)
+		w.Write([]byte(errorMessage))
+	}
+}
+
+type CustomErrorResponse struct {
+	Message   string `json:"message"`
+	RequestID int `json:"request_id,omitempty"`
+	Code      int    `json:"code"`
+}
+
+func incrementRequestCounter() int {
+	newID := atomic.AddUint64(&requestCounter, 1)
+	return int(newID)
 }
