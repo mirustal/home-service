@@ -19,6 +19,7 @@ type PostgresConfig struct {
 
 type GRPCConfig struct {
 	Port           int `yaml:"port"`
+	AuthAddress		string `yaml:"authaddress"`
 }
 
 type RedisConfig struct {

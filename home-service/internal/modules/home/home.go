@@ -88,13 +88,16 @@ func (h *Home) CreateHouse(ctx context.Context, address string, year int, develo
 	return house, nil
 }
 
-func (h *Home) GetFlatsInHouse(ctx context.Context, houseID int) ([]models.Flat, error) {
-	const op = "internal.services.home.GetFlatsInHouse"
+func (h *Home) GetFlatsInHouse(ctx context.Context, houseID int, userType string) ([]models.Flat, error) {
+	const op = "internal.modules.home.GetFlatsInHouse"
 	log := h.log.With(
 		slog.String("op", op),
 	)
-
-	flats, err := h.flatByHouseGetter.GetFlatsByHouseID(ctx, houseID, false)
+	var isAdmin bool
+	if userType == "moderator"{
+		isAdmin = true
+	}
+	flats, err := h.flatByHouseGetter.GetFlatsByHouseID(ctx, houseID, isAdmin)
 	if err != nil {
 		log.Error("failed to get flats in house")
 		return nil, fmt.Errorf("%s: %v", op, err)
@@ -106,7 +109,7 @@ func (h *Home) GetFlatsInHouse(ctx context.Context, houseID int) ([]models.Flat,
 }
 
 func (h *Home) SubscribeToHouse(ctx context.Context, houseID int, email string) error {
-	const op = "internal.services.home.SubscribeToHouse"
+	const op = "internal.modules.home.SubscribeToHouse"
 	log := h.log.With(
 		slog.String("op", op),
 	)
@@ -124,7 +127,7 @@ func (h *Home) SubscribeToHouse(ctx context.Context, houseID int, email string) 
 
 
 func (h *Home) CreateFlat(ctx context.Context, houseID int, price int, rooms int) (models.Flat, error) {
-	const op = "internal.services.home.CreateFlat"
+	const op = "internal.modules.home.CreateFlat"
 	log := h.log.With(
 		slog.String("op", op),
 	)
@@ -148,7 +151,7 @@ func (h *Home) CreateFlat(ctx context.Context, houseID int, price int, rooms int
 
 
 func (h *Home) UpdateFlat(ctx context.Context, flatID int, status string) (models.Flat, error) {
-	const op = "internal.services.home.UpdateFlat"
+	const op = "internal.modules.home.UpdateFlat"
 	log := h.log.With(
 		slog.String("op", op),
 	)

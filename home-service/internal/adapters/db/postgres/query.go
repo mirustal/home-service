@@ -67,6 +67,17 @@ func (pg *DbPostgres) CreateFlat(ctx context.Context, houseID, price, rooms int)
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
+	updateHouseQuery := `
+		UPDATE houses
+		SET updated_at = NOW()
+		WHERE id = $1;
+	`
+
+	_, err = tx.Exec(ctx, updateHouseQuery, houseID)
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
 	if err := tx.Commit(ctx); err != nil {
 		return 0, fmt.Errorf("%s: failed to commit tx: %w", op, err)
 	}
@@ -76,12 +87,13 @@ func (pg *DbPostgres) CreateFlat(ctx context.Context, houseID, price, rooms int)
 
 func (pg *DbPostgres) UpdateFlatStatus(ctx context.Context, flatID int, status string) (models.Flat, error) {
 	const op = "postgres.UpdateFlatStatus"
-
+	
 	var flat models.Flat
 
 	tx, err := pg.db.Begin(ctx)
 	if err != nil {
-		return flat, fmt.Errorf("%s: failed to begin tx: %w", op, err)
+		pg.log.Error("%s: %v", op, err)
+		return flat, fmt.Errorf("failed to begin tx: %w", err)
 	}
 	defer tx.Rollback(ctx)
 
@@ -102,11 +114,13 @@ func (pg *DbPostgres) UpdateFlatStatus(ctx context.Context, flatID int, status s
 		&flat.UpdatedAt,
 	)
 	if err != nil {
-		return flat, fmt.Errorf("%s: failed to update flat status: %w", op, err)
+		pg.log.Error("%s: %v", op, err)
+		return flat, fmt.Errorf("failed to update flat status: %w", err)
 	}
 
 	if err := tx.Commit(ctx); err != nil {
-		return flat, fmt.Errorf("%s: failed to commit tx: %w", op, err)
+		pg.log.Error("%s: %v", op, err)
+		return flat, fmt.Errorf("failed to commit tx: %w", err)
 	}
 
 	return flat, nil

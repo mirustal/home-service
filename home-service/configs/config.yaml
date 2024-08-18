@@ -9,9 +9,10 @@ postgresdb:
   name: "home-service"
 
 redisdb:
-  host: "0.0.0.0"
+  host: "localhost:6379"
   port: 6379
   name: "name"
 
 grpc:
   port: 9002
+  authaddress: "localhost:9001"

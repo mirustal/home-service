@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package auth;
+option go_package = "../../pkg/pb";
+
+message RegisterRequest {
+    string email = 1;
+    string password = 2;
+    UserType user_type = 3;
+}
+
+message RegisterResponse {
+    string user_id = 1;
+}
+
+enum UserType {
+    client = 0;
+    moderator = 1;
+}

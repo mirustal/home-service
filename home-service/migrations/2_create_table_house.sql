@@ -12,6 +12,7 @@ CREATE TABLE houses (
 CREATE TABLE flats (
     id SERIAL PRIMARY KEY,
     house_id INT REFERENCES houses(id) ON DELETE CASCADE,
+    flat_num INT CHECK (flat_num > 0),
     price INT CHECK (price >= 0),
     rooms INT CHECK (rooms > 0),
     status VARCHAR(20) CHECK (status IN ('created', 'approved', 'declined', 'on moderation')),
@@ -37,7 +38,10 @@ CREATE INDEX idx_flats_status ON flats (status);
 -- +goose StatementBegin
 DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS apps;
+DROP TABLE IF EXISTS houses;
+DROP TABLE IF EXISTS flats;
+DROP TABLE IF EXISTS subscriptions;
+
 
 DROP INDEX IF EXISTS idx_flats_house_id;
 DROP INDEX IF EXISTS idx_flats_status;

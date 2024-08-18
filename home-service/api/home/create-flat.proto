@@ -3,7 +3,7 @@ syntax = "proto3";
 package home;
 option go_package = "../../pkg/pb";
 
-import "flats-in-house.proto";
+
 
 message CreateFlatRequest {
     int32 house_id = 1;
@@ -16,5 +16,5 @@ message CreateFlatResponse {
     int32 house_id = 2;
     int32 price = 3;
     int32 rooms = 4;
-    Status status = 5;
+    string status = 5;
 }

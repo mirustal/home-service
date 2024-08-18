@@ -16,12 +16,12 @@ message Flat {
     int32 house_id = 2;
     int32 price = 3;
     int32 rooms = 4;
-    Status status = 5;
+    string status = 5;
 }
 
 enum Status {
-    CREATED = 0;
-    APPROVED = 1;
-    DECLINED = 2;
-    ON_MODERATION = 3;
+    created = 0;
+    approved = 1;
+    declined = 2;
+    onModeration = 3;
 }

@@ -10,8 +10,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 
-	homegrpc "home-service/internal/grpc/home"
-	"home-service/internal/services/home"
+	homegrpc "home-service/internal/app/grpc/home"
+	authclient "home-service/internal/client/auth-service"
+	"home-service/internal/modules/home"
 	"home-service/pkg/config"
 )
 
@@ -21,13 +22,13 @@ type App struct {
 	cfg        *config.GRPCConfig
 }
 
-func New(log *slog.Logger, home *home.Home, cfg *config.GRPCConfig) *App {
+func New(log *slog.Logger, authClient authclient.AuthClient, home *home.Home, cfg *config.GRPCConfig) *App {
 	gRPCServer := grpc.NewServer(
 		grpc.UnaryInterceptor(unaryLoggingInterceptor(log)),
 		grpc.StreamInterceptor(streamLoggingInterceptor(log)),
 	)
 
-	homegrpc.Register(gRPCServer, home)
+	homegrpc.Register(gRPCServer, home, authClient)
 
 	return &App{
 		log:        log,

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package auth;
+option go_package = "../../pkg/pb";
+
+import "login.proto";
+import "dummy-login.proto";
+import "register.proto";
+import "refresh-session.proto";
+import "validate-session.proto";
+
+
+
+service Auth {
+    rpc Register (RegisterRequest) returns (RegisterResponse);
+    rpc Login (LoginRequest) returns (LoginResponse);
+    rpc DummyLogin(DummyLoginRequest) returns (DummyLoginResponse);
+    rpc ValidateSession (ValidateRequest) returns (ValidateResponse);
+    rpc RefreshSession (RefreshRequest) returns (RefreshResponse);
+}

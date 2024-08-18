@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"home-service/internal/adapters/cache/redis"
 	"home-service/internal/adapters/db/postgres"
 	"home-service/internal/app"
 	"home-service/pkg/config"
@@ -22,6 +23,11 @@ func main() {
 	logger := logger.LogInit(cfg.ModeLog)
 
 	db, err := postgres.New(context.Background(), cfg.PostgresDB, logger.Log)
+	if err != nil {
+		logger.Log.Warn ("fail load config: %v", err)
+	}
+	_, err = redis.NewRedisCache(*cfg.RedisDB, *logger.Log)
+	
 
 	app := app.New(logger.Log, cfg.GRPC, db)
 
