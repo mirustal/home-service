@@ -2,38 +2,25 @@ package redis
 
 import (
 	"context"
-	"encoding/json"
-
-	"home-service/internal/models"
+	"fmt"
 )
 
-func (userCache *RedisAdapter) Delete(key string) error {
-	return userCache.client.Del(context.Background(), key).Err()
+func (ra *RedisAdapter) Delete(key string) error {
+	return ra.client.Del(context.Background(), key).Err()
 }
 
-func (ra *RedisAdapter) Set(key string, value *models.User) {
-	op := "adapters.cache.set"
-
-	json, err := json.Marshal(value)
-	if err != nil {
-	ra.log.Error("%s: %v", op, err)
-	}	
-
-	ra.client.Set(context.Background(), key, json, ra.ttl)
+func (ra *RedisAdapter) Set(key, value string) {
+	ra.client.Set(context.Background(), key, []byte(value), ra.ttl)
 }
 
-func (ra *RedisAdapter) Get(key string) *models.User {
+func (ra *RedisAdapter) Get(key string) (string, string, error) {
 	op := "adapters.cache.get"
 	val, err := ra.client.Get(context.Background(), key).Result()
-	
+
 	if err != nil {
 		ra.log.Error("%s: %v", op, err)
-		}	
-
-	user := models.User{}
-	err = json.Unmarshal([]byte(val), &user)
-	if err != nil {
-		panic(err)
+		return "", "", fmt.Errorf("%v", err)
 	}
-	return &user
+
+	return key, val, nil
 }

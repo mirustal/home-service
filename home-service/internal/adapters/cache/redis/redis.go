@@ -14,8 +14,8 @@ import (
 type RedisAdapter struct {
 	client *redis.Client
 	ttl    time.Duration
-	cfg config.RedisConfig
-	log slog.Logger
+	cfg    config.RedisConfig
+	log    slog.Logger
 }
 
 func NewRedisCache(cfg config.RedisConfig, log slog.Logger) (*RedisAdapter, error) {
@@ -36,7 +36,7 @@ func NewRedisCache(cfg config.RedisConfig, log slog.Logger) (*RedisAdapter, erro
 	return &RedisAdapter{
 		client: client,
 		ttl:    1 * time.Hour,
-		cfg: cfg,
-		log: log,
+		cfg:    cfg,
+		log:    log,
 	}, nil
 }

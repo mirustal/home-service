@@ -87,7 +87,7 @@ func (pg *DbPostgres) CreateFlat(ctx context.Context, houseID, price, rooms int)
 
 func (pg *DbPostgres) UpdateFlatStatus(ctx context.Context, flatID int, status string) (models.Flat, error) {
 	const op = "postgres.UpdateFlatStatus"
-	
+
 	var flat models.Flat
 
 	tx, err := pg.db.Begin(ctx)
@@ -126,7 +126,6 @@ func (pg *DbPostgres) UpdateFlatStatus(ctx context.Context, flatID int, status s
 	return flat, nil
 }
 
-
 func (pg *DbPostgres) GetFlatByID(ctx context.Context, flatID int) (models.Flat, error) {
 	const op = "postgres.GetFlatByID"
 
@@ -156,7 +155,6 @@ func (pg *DbPostgres) GetFlatByID(ctx context.Context, flatID int) (models.Flat,
 
 	return flat, nil
 }
-
 
 func (pg *DbPostgres) GetHouse(ctx context.Context, houseID int) (models.House, error) {
 	const op = "postgres.GetHouse"
@@ -241,4 +239,35 @@ func (pg *DbPostgres) SubscribeToHouse(ctx context.Context, houseID int, email s
 	}
 
 	return subscriptionID, nil
+}
+
+func (pg *DbPostgres) GetSubscribers(ctx context.Context, houseID int) ([]string, error) {
+	const op = "postgres.GetSubscribers"
+
+	query := `
+		SELECT email
+		FROM subscriptions
+		WHERE house_id = $1;
+	`
+
+	rows, err := pg.db.Query(ctx, query, houseID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	var emails []string
+	for rows.Next() {
+		var email string
+		if err := rows.Scan(&email); err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+		emails = append(emails, email)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return emails, nil
 }

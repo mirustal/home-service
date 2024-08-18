@@ -16,3 +16,6 @@ redisdb:
 grpc:
   port: 9002
   authaddress: "localhost:9001"
+
+jet:
+  addres: "localhost:4222"

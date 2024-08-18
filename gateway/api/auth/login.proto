@@ -12,4 +12,3 @@ message LoginResponse {
     string token = 1 [json_name = "token"];
 }
 
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluIiwiZXhwIjoxNzI0MDA3NDU2LCJ1aWQiOiI4OGM1NGUxYS0xYTFiLTRkNzQtYWZhOS0wMGUxZjkzNDZiMDMiLCJ1c2VyX3R5cGUiOiJtb2RlcmF0b3IifQ.0IdCLpQ70MBh0VghhBZuPcnObIGU4Hjil6dIgjrhg_k
