@@ -9,14 +9,16 @@ import (
 )
 
 type Home struct {
-	log *slog.Logger
-	houseCreater HouseCreater
-	houseGetter HouseGetter
-	houseSubscriber HouseSubscriber
-	flatCreater FlatCreater
-	flatGetter FlatGetter
+	log               *slog.Logger
+	houseCreater      HouseCreater
+	houseGetter       HouseGetter
+	houseSubscriber   HouseSubscriber
+	flatCreater       FlatCreater
+	flatGetter        FlatGetter
 	flatByHouseGetter FlatsByHouseGetter
 	flatStatusUpdater FlatsStatusUpdater
+	getSubscriber     GetSubscriber
+	jetpusher         jetPusher
 }
 
 func New(
@@ -27,16 +29,20 @@ func New(
 	flatCreater FlatCreater,
 	flatGetter FlatGetter,
 	flatByHouseGetter FlatsByHouseGetter,
-	flatStatusUpdater FlatsStatusUpdater) *Home {
+	flatStatusUpdater FlatsStatusUpdater,
+	getSubscriber GetSubscriber,
+	jetpusher jetPusher) *Home {
 	return &Home{
-		log: log,
-		houseCreater: houseCreater,
-	houseGetter: houseGetter,
-	houseSubscriber: houseSubscriber,
-	flatGetter: flatGetter,
-	flatCreater: flatCreater,
-	flatByHouseGetter: flatByHouseGetter,
-	flatStatusUpdater: flatStatusUpdater,
+		log:               log,
+		houseCreater:      houseCreater,
+		houseGetter:       houseGetter,
+		houseSubscriber:   houseSubscriber,
+		flatGetter:        flatGetter,
+		flatCreater:       flatCreater,
+		flatByHouseGetter: flatByHouseGetter,
+		flatStatusUpdater: flatStatusUpdater,
+		getSubscriber:     getSubscriber,
+		jetpusher:         jetpusher,
 	}
 }
 
@@ -68,7 +74,13 @@ type FlatsByHouseGetter interface {
 	GetFlatsByHouseID(ctx context.Context, houseID int, includeAll bool) ([]models.Flat, error)
 }
 
+type GetSubscriber interface {
+	GetSubscribers(ctx context.Context, houseID int) ([]string, error)
+}
 
+type jetPusher interface {
+	Publish(subsject string, message []byte) error
+}
 
 func (h *Home) CreateHouse(ctx context.Context, address string, year int, developer string) (models.House, error) {
 	const op = "internal.services.home.CreateHouse"
@@ -94,7 +106,7 @@ func (h *Home) GetFlatsInHouse(ctx context.Context, houseID int, userType string
 		slog.String("op", op),
 	)
 	var isAdmin bool
-	if userType == "moderator"{
+	if userType == "moderator" {
 		isAdmin = true
 	}
 	flats, err := h.flatByHouseGetter.GetFlatsByHouseID(ctx, houseID, isAdmin)
@@ -104,7 +116,6 @@ func (h *Home) GetFlatsInHouse(ctx context.Context, houseID int, userType string
 	}
 
 	log.Info("flats retrieved successfully", slog.Int("houseID", houseID))
-
 	return flats, nil
 }
 
@@ -125,7 +136,6 @@ func (h *Home) SubscribeToHouse(ctx context.Context, houseID int, email string) 
 	return nil
 }
 
-
 func (h *Home) CreateFlat(ctx context.Context, houseID int, price int, rooms int) (models.Flat, error) {
 	const op = "internal.modules.home.CreateFlat"
 	log := h.log.With(
@@ -144,11 +154,22 @@ func (h *Home) CreateFlat(ctx context.Context, houseID int, price int, rooms int
 		return models.Flat{}, fmt.Errorf("%s: %v", op, err)
 	}
 
-	log.Info("flat created successfully", slog.Int("flatID", flatID))
+	subscribers, err := h.getSubscriber.GetSubscribers(ctx, flat.HouseID)
+	if err != nil {
+		log.Error("%s: %v", op, err)
+		return models.Flat{}, fmt.Errorf("failed get subscribers")
+	}
 
+	for _, str := range subscribers {
+		err := h.jetpusher.Publish("house.1.new", []byte(str))
+		if err != nil {
+			continue
+		}
+	}
+
+	log.Info("flat created successfully", slog.Int("flatID", flatID))
 	return flat, nil
 }
-
 
 func (h *Home) UpdateFlat(ctx context.Context, flatID int, status string) (models.Flat, error) {
 	const op = "internal.modules.home.UpdateFlat"
@@ -166,4 +187,3 @@ func (h *Home) UpdateFlat(ctx context.Context, flatID int, status string) (model
 
 	return flat, nil
 }
-
