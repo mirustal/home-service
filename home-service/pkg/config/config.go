@@ -18,8 +18,12 @@ type PostgresConfig struct {
 }
 
 type GRPCConfig struct {
-	Port           int `yaml:"port"`
-	AuthAddress		string `yaml:"authaddress"`
+	Port        int    `yaml:"port"`
+	AuthAddress string `yaml:"authaddress"`
+}
+
+type JetConfig struct {
+	Address string `yaml:"address"`
 }
 
 type RedisConfig struct {
@@ -30,10 +34,11 @@ type RedisConfig struct {
 }
 
 type Config struct {
-	ModeLog string      `yaml:"modelog" env-default:"debug"`
-	GRPC    *GRPCConfig `yaml:"grpc"`
-	PostgresDB      *PostgresConfig   `yaml:"postgresdb"`
-	RedisDB	*RedisConfig `yaml"redisdb"`
+	ModeLog    string          `yaml:"modelog" env-default:"debug"`
+	GRPC       *GRPCConfig     `yaml:"grpc"`
+	PostgresDB *PostgresConfig `yaml:"postgresdb"`
+	RedisDB    *RedisConfig    `yaml"redisdb"`
+	Jet        *JetConfig      `yaml"jet"`
 }
 
 func LoadConfig(fileName, fileType string) (*Config, error) {
