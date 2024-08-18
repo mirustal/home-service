@@ -89,7 +89,6 @@ func (s *serverAPI) DummyLogin(ctx context.Context, req *authgrpc.DummyLoginRequ
 }
 
 func (s *serverAPI) ValidateSession(ctx context.Context, req *authgrpc.ValidateRequest) (*authgrpc.ValidateResponse, error) {
-	// Извлекаем токен из метаданных или тела запроса
 	reqToken, err := ExtractAccessToken(ctx, req.GetAccessToken())
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "access token not found")
@@ -106,8 +105,8 @@ func (s *serverAPI) ValidateSession(ctx context.Context, req *authgrpc.ValidateR
 	}
 
 	return &authgrpc.ValidateResponse{
-		IsValid: isValid,
-		Uid:     uid,
+		IsValid:  isValid,
+		Uid:      uid,
 		UserType: userType,
 	}, nil
 }
@@ -144,8 +143,6 @@ func ExtractAccessToken(ctx context.Context, reqTokenFromBody string) (string, e
 	return "", fmt.Errorf("access token not found")
 }
 
-
-
 func validateLogin(req *authgrpc.LoginRequest) (string, string, error) {
 	userid := req.GetId()
 	if userid == "" {
@@ -154,7 +151,7 @@ func validateLogin(req *authgrpc.LoginRequest) (string, string, error) {
 
 	pass := req.GetPassword()
 	if pass == "" {
-		return "", "", status.Error(codes.InvalidArgument, "pass is required")
+		return "", "", status.Error(codes.InvalidArgument, "password is required")
 	}
 
 	return userid, pass, nil
@@ -163,12 +160,12 @@ func validateLogin(req *authgrpc.LoginRequest) (string, string, error) {
 func validateRegister(req *authgrpc.RegisterRequest) (string, string, string, error) {
 	email := req.GetEmail()
 	if email == "" {
-		return  "", "", "", status.Error(codes.InvalidArgument, "email is required")
+		return "", "", "", status.Error(codes.InvalidArgument, "email is required")
 	}
 
 	pass := req.GetPassword()
 	if pass == "" {
-		return "", "", "", status.Error(codes.InvalidArgument, "pass is required")
+		return "", "", "", status.Error(codes.InvalidArgument, "password is required")
 	}
 
 	userType := req.GetUserType()
