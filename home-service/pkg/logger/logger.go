@@ -7,7 +7,6 @@ import (
 	"os"
 )
 
-
 type Logger struct {
 	Log *slog.Logger
 }
@@ -35,14 +34,12 @@ func LogInit(modeLog string) *Logger {
 	}
 }
 
-
 func Err(err error) slog.Attr {
 	return slog.Attr{
 		Key:   "error",
 		Value: slog.StringValue(err.Error()),
 	}
 }
-
 
 func (l *Logger) LogRequest(r *http.Request, requestID string) {
 	l.Log.Info("Incoming request",
@@ -52,7 +49,6 @@ func (l *Logger) LogRequest(r *http.Request, requestID string) {
 		slog.String("query", r.URL.RawQuery),
 	)
 }
-
 
 func (l *Logger) LogResponse(r *http.Request, status int, requestID string, responseBody string) {
 	level := slog.LevelInfo
@@ -71,7 +67,6 @@ func (l *Logger) LogResponse(r *http.Request, status int, requestID string, resp
 	)
 }
 
-
 func (l *Logger) LogError(ctx context.Context, err error) {
 	requestID := ctx.Value("request_id").(string)
 	l.Log.Error("An error occurred",
@@ -79,5 +74,3 @@ func (l *Logger) LogError(ctx context.Context, err error) {
 		slog.String("request_id", requestID),
 	)
 }
-
-
