@@ -1,4 +1,4 @@
-package grpc
+package grpcapp
 
 import (
 	"context"
@@ -10,8 +10,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 
-	authgrpc "auth-service/internal/grpc/auth"
-	"auth-service/internal/services/auth"
+	authgrpc "auth-service/internal/app/grpc/auth"
+	"auth-service/internal/modules/auth"
 	"auth-service/pkg/config"
 )
 

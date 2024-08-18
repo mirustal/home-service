@@ -21,9 +21,9 @@ func (pg *DbPostgres) Ping(ctx context.Context) error {
 }
 
 func (pg *DbPostgres) GetUser(ctx context.Context, userID string) (models.User, error) {
-    const op = "postgres.GetUser"
+	const op = "postgres.GetUser"
 
-    query := `
+	query := `
         SELECT users.id,
                users.email,
                users.password_hashed,
@@ -34,25 +34,24 @@ func (pg *DbPostgres) GetUser(ctx context.Context, userID string) (models.User, 
         WHERE id = $1
         LIMIT 1;
     `
-    var user models.User
+	var user models.User
 
-    err := pg.db.QueryRow(ctx, query, userID).Scan(
-        &user.ID,
-        &user.Email,
-        &user.HashPass,
-        &user.Type,
-        &user.CreatedAt,
-        &user.UpdatedAt,
-    )
-    if err == pgx.ErrNoRows {
-        return user, dbErr.ErrUserNotFound
-    } else if err != nil {
-        return user, fmt.Errorf("%s: %w", op, err)
-    }
+	err := pg.db.QueryRow(ctx, query, userID).Scan(
+		&user.ID,
+		&user.Email,
+		&user.HashPass,
+		&user.Type,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err == pgx.ErrNoRows {
+		return user, dbErr.ErrUserNotFound
+	} else if err != nil {
+		return user, fmt.Errorf("%s: %w", op, err)
+	}
 
-    return user, nil
+	return user, nil
 }
-
 
 func (pg *DbPostgres) SaveUser(ctx context.Context, email string, passHash []byte, userType string) (string, error) {
 	const op = "postgres.SaveUser"
@@ -84,8 +83,9 @@ func (pg *DbPostgres) SaveUser(ctx context.Context, email string, passHash []byt
 	return id.String(), nil
 }
 
-func (pg *DbPostgres) SaveRefreshToken(ctx context.Context, refreshToken string, uid uuid.UUID) error {
+func (pg *DbPostgres) SaveRefreshToken(ctx context.Context, refreshToken string, uid string) error {
 	const op = "postgres.SaveRefreshToken"
+
 
 	tx, err := pg.db.Begin(ctx)
 	if err != nil {

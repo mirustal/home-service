@@ -28,7 +28,7 @@ type Config struct {
 	DB      *DBConfig   `yaml:"db"`
 }
 
-func LoadConfig(fileName, fileType string) (*Config, error) {
+func LoadConfigYAML(fileName, fileType string) (*Config, error) {
 	var cfg *Config
 	v := viper.New()
 	v.SetConfigType(fileType)
@@ -50,6 +50,20 @@ func LoadConfig(fileName, fileType string) (*Config, error) {
 	}
 
 	return cfg, nil
+}
+
+func LoadENV(fileName, fileType string) (error) {
+	v := viper.New()
+	v.SetConfigType(fileType)
+	v.SetConfigName(fileName)
+	v.AddConfigPath("./envs")
+	v.AutomaticEnv()
+
+	if err := v.ReadInConfig(); err != nil {
+		log.Fatalf("Error reading config file, %s", err)
+		return err
+	}
+	return nil
 }
 
 func fetchConfig() string {

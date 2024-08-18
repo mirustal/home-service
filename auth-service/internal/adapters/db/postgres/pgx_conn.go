@@ -52,27 +52,23 @@ func New(ctx context.Context, cfg *config.DBConfig, log *slog.Logger) (*DbPostgr
 	)
 	log.Info("database connect")
 
-
-    if err := goose.SetDialect("postgres"); err != nil {
+	if err := goose.SetDialect("postgres"); err != nil {
 		fmt.Errorf("%s: %w", op, err)
-       panic(err)
-    }
-    db := stdlib.OpenDBFromPool(pgInstance.db)
-    if err := goose.Up(db, "migrations"); err != nil {
-		fmt.Errorf("%s: %w", op, err)
-        panic(err)
-    
+		panic(err)
 	}
-    if err := db.Close(); err != nil {
+	db := stdlib.OpenDBFromPool(pgInstance.db)
+	if err := goose.Up(db, "migrations"); err != nil {
 		fmt.Errorf("%s: %w", op, err)
-        panic(err)
-    }
+		panic(err)
 
+	}
+	if err := db.Close(); err != nil {
+		fmt.Errorf("%s: %w", op, err)
+		panic(err)
+	}
 
 	return pgInstance, nil
 }
-
-
 
 func createConnString(cfg *config.DBConfig) string {
 	return fmt.Sprintf("postgresql://%s:%s@%s:%d/%s",

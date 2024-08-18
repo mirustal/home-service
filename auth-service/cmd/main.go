@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -14,7 +15,14 @@ import (
 )
 
 func main() {
-	cfg, err := config.LoadConfig("config", "yaml")
+	cfg, err := config.LoadConfigYAML("config", "yaml")
+	if err != nil {
+		log.Fatal("fail load config: %v", err)
+	}
+
+	fmt.Println(os.Getenv("secret_key"))
+
+	err = config.LoadENV("local", "env")
 	if err != nil {
 		log.Fatal("fail load config: %v", err)
 	}

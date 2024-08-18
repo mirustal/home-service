@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package auth;
+option go_package = "../../pkg/pb;authgrpc";
+
+message RefreshRequest {
+    string access_token = 1;
+    string refresh_token = 2;
+  }
+
+  message RefreshResponse {
+    string new_access_token = 1;
+    string new_refresh_token = 2;
+  }

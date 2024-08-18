@@ -2,6 +2,7 @@ dockerup:
 	docker-compose down
 	docker-compose up -b
 gen-grpc:
+	rm -f pkg/pb/*.go
 	protoc --proto_path=./api/auth \
     --go_out=./pkg/pb \
     --go_opt=paths=source_relative \
