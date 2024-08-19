@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -16,19 +16,20 @@ import (
 func main() {
 	cfg, err := config.LoadConfigYAML("config", "yaml")
 	if err != nil {
-		// log.Fatalf("fail load config: %v", err)
+		log.Fatalf("fail load config: %w", err)
 	}
-
-	fmt.Println(os.Getenv("secret_key"))
 
 	err = config.LoadENV("local", "env")
 	if err != nil {
-		// log.Fatalf("fail load config: %v", err)
+		log.Fatalf("fail load config: %w", err)
 	}
 
 	logger := logger.LogInit(cfg.ModeLog)
 
 	db, err := postgres.New(context.Background(), cfg.DB, logger.Log)
+	if err != nil {
+		log.Fatalf("db fail connect")
+	}
 
 	app := app.New(logger.Log, cfg.GRPC, db)
 
