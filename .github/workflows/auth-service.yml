@@ -30,7 +30,7 @@ jobs:
       run: cd auth-service && go test ./... -v
 
     - name: Generate test coverage report
-      run: cd auth-service && go test ./... -coverprofile=coverage.out
+      run: cd auth-service && go test ./... -coverprofile=coverage.txt
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
