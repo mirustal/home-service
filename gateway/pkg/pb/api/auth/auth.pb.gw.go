@@ -36,7 +36,7 @@ func request_Auth_Register_0(ctx context.Context, marshaler runtime.Marshaler, c
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := client.Register(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -49,7 +49,7 @@ func local_request_Auth_Register_0(ctx context.Context, marshaler runtime.Marsha
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := server.Register(ctx, &protoReq)
@@ -62,7 +62,7 @@ func request_Auth_Login_0(ctx context.Context, marshaler runtime.Marshaler, clie
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := client.Login(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -75,7 +75,7 @@ func local_request_Auth_Login_0(ctx context.Context, marshaler runtime.Marshaler
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := server.Login(ctx, &protoReq)
@@ -92,10 +92,10 @@ func request_Auth_DummyLogin_0(ctx context.Context, marshaler runtime.Marshaler,
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Auth_DummyLogin_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := client.DummyLogin(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -108,10 +108,10 @@ func local_request_Auth_DummyLogin_0(ctx context.Context, marshaler runtime.Mars
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Auth_DummyLogin_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := server.DummyLogin(ctx, &protoReq)
@@ -124,7 +124,7 @@ func request_Auth_ValidateSession_0(ctx context.Context, marshaler runtime.Marsh
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := client.ValidateSession(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -137,7 +137,7 @@ func local_request_Auth_ValidateSession_0(ctx context.Context, marshaler runtime
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := server.ValidateSession(ctx, &protoReq)
@@ -150,7 +150,7 @@ func request_Auth_RefreshSession_0(ctx context.Context, marshaler runtime.Marsha
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := client.RefreshSession(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -163,7 +163,7 @@ func local_request_Auth_RefreshSession_0(ctx context.Context, marshaler runtime.
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := server.RefreshSession(ctx, &protoReq)
@@ -315,14 +315,14 @@ func RegisterAuthHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux,
 	defer func() {
 		if err != nil {
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Errorf("Failed to close conn to %s: %w", endpoint, cerr)
 			}
 			return
 		}
 		go func() {
 			<-ctx.Done()
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Errorf("Failed to close conn to %s: %w", endpoint, cerr)
 			}
 		}()
 	}()

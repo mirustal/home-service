@@ -36,7 +36,7 @@ func request_HouseService_CreateHouse_0(ctx context.Context, marshaler runtime.M
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := client.CreateHouse(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -49,7 +49,7 @@ func local_request_HouseService_CreateHouse_0(ctx context.Context, marshaler run
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := server.CreateHouse(ctx, &protoReq)
@@ -75,7 +75,7 @@ func request_HouseService_GetFlatsInHouse_0(ctx context.Context, marshaler runti
 
 	protoReq.Id, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %w", "id", err)
 	}
 
 	msg, err := client.GetFlatsInHouse(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -101,7 +101,7 @@ func local_request_HouseService_GetFlatsInHouse_0(ctx context.Context, marshaler
 
 	protoReq.Id, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %w", "id", err)
 	}
 
 	msg, err := server.GetFlatsInHouse(ctx, &protoReq)
@@ -114,7 +114,7 @@ func request_HouseService_SubscribeToHouse_0(ctx context.Context, marshaler runt
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	var (
@@ -131,7 +131,7 @@ func request_HouseService_SubscribeToHouse_0(ctx context.Context, marshaler runt
 
 	protoReq.Id, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %w", "id", err)
 	}
 
 	msg, err := client.SubscribeToHouse(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -144,7 +144,7 @@ func local_request_HouseService_SubscribeToHouse_0(ctx context.Context, marshale
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	var (
@@ -161,7 +161,7 @@ func local_request_HouseService_SubscribeToHouse_0(ctx context.Context, marshale
 
 	protoReq.Id, err = runtime.Int32(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %w", "id", err)
 	}
 
 	msg, err := server.SubscribeToHouse(ctx, &protoReq)
@@ -174,7 +174,7 @@ func request_HouseService_CreateFlat_0(ctx context.Context, marshaler runtime.Ma
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := client.CreateFlat(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -187,7 +187,7 @@ func local_request_HouseService_CreateFlat_0(ctx context.Context, marshaler runt
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := server.CreateFlat(ctx, &protoReq)
@@ -200,7 +200,7 @@ func request_HouseService_UpdateFlat_0(ctx context.Context, marshaler runtime.Ma
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := client.UpdateFlat(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -213,7 +213,7 @@ func local_request_HouseService_UpdateFlat_0(ctx context.Context, marshaler runt
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%w", err)
 	}
 
 	msg, err := server.UpdateFlat(ctx, &protoReq)
@@ -365,14 +365,14 @@ func RegisterHouseServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.S
 	defer func() {
 		if err != nil {
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Errorf("Failed to close conn to %s: %w", endpoint, cerr)
 			}
 			return
 		}
 		go func() {
 			<-ctx.Done()
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Errorf("Failed to close conn to %s: %w", endpoint, cerr)
 			}
 		}()
 	}()

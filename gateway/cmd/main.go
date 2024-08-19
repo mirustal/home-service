@@ -35,7 +35,7 @@ func main() {
 
 	cfg, err := config.LoadConfig("config", "yaml")
 	if err != nil {
-		log.Fatal("fail load config: %v", err)
+		log.Fatal("fail load config: %w", err)
 	}
 
 	logger := logger.LogInit(cfg.ModeLog)
@@ -54,12 +54,12 @@ func main() {
 
 	err = pbauth.RegisterAuthHandlerFromEndpoint(ctx, mux, cfg.GRPC.PortAuth, []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())})
 	if err != nil {
-		logger.Log.Error("failed to register auth service: %v", err)
+		logger.Log.Error("failed to register auth service: %w", err)
 	}
 
 	err = pbhome.RegisterHouseServiceHandlerFromEndpoint(ctx, mux, cfg.GRPC.PortHomes, []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())})
 	if err != nil {
-		logger.Log.Error("failed to register personalinfo service: %v", err)
+		logger.Log.Error("failed to register personalinfo service: %w", err)
 	}
 
 	var wg sync.WaitGroup

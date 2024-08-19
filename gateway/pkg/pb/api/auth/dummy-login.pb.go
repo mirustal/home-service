@@ -64,7 +64,7 @@ func (x *DummyLoginRequest) GetUserType() UserType {
 	if x != nil {
 		return x.UserType
 	}
-	return UserType_client
+	return UserType_UNKNOWN
 }
 
 type DummyLoginResponse struct {

@@ -104,10 +104,11 @@
             "required": false,
             "type": "string",
             "enum": [
+              "UNKNOWN",
               "client",
               "moderator"
             ],
-            "default": "client"
+            "default": "UNKNOWN"
           }
         ],
         "tags": [
@@ -255,10 +256,11 @@
     "authUserType": {
       "type": "string",
       "enum": [
+        "UNKNOWN",
         "client",
         "moderator"
       ],
-      "default": "client"
+      "default": "UNKNOWN"
     },
     "authValidateRequest": {
       "type": "object",
