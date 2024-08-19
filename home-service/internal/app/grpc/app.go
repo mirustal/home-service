@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 
+	"home-service/internal/adapters/cache/redis"
 	homegrpc "home-service/internal/app/grpc/home"
 	authclient "home-service/internal/client/auth-service"
 	"home-service/internal/modules/home"
@@ -22,13 +23,13 @@ type App struct {
 	cfg        *config.GRPCConfig
 }
 
-func New(log *slog.Logger, authClient authclient.AuthClient, home *home.Home, cfg *config.GRPCConfig) *App {
+func New(log *slog.Logger, authClient authclient.AuthClient, home *home.Home, cfg *config.GRPCConfig, cache *redis.RedisAdapter) *App {
 	gRPCServer := grpc.NewServer(
 		grpc.UnaryInterceptor(unaryLoggingInterceptor(log)),
 		grpc.StreamInterceptor(streamLoggingInterceptor(log)),
 	)
 
-	homegrpc.Register(gRPCServer, home, authClient)
+	homegrpc.Register(gRPCServer, home, authClient, cache, cache)
 
 	return &App{
 		log:        log,

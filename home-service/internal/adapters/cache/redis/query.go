@@ -18,8 +18,8 @@ func (ra *RedisAdapter) Get(key string) (string, string, error) {
 	val, err := ra.client.Get(context.Background(), key).Result()
 
 	if err != nil {
-		ra.log.Error("%s: %v", op, err)
-		return "", "", fmt.Errorf("%v", err)
+		ra.log.Error("%s: %w", op, err)
+		return "", "", fmt.Errorf("%w", err)
 	}
 
 	return key, val, nil

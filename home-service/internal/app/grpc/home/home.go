@@ -12,6 +12,7 @@ import (
 
 	authclient "home-service/internal/client/auth-service"
 	"home-service/internal/models"
+	"home-service/pkg/jwt"
 	"home-service/pkg/pb"
 )
 
@@ -19,14 +20,16 @@ type serverAPI struct {
 	pb.UnimplementedHouseServiceServer
 	home        Home
 	authClient  authclient.AuthClient
-	caheGetter  cacheGetter
+	caсheGetter cacheGetter
 	cacheSetter cacheSetter
 }
 
-func Register(gRPC *grpc.Server, home Home, authCleint authclient.AuthClient) {
+func Register(gRPC *grpc.Server, home Home, authCleint authclient.AuthClient, cacheGetter cacheGetter, cacheSetter cacheSetter) {
 	pb.RegisterHouseServiceServer(gRPC, &serverAPI{
-		home:       home,
-		authClient: authCleint,
+		home:        home,
+		authClient:  authCleint,
+		cacheSetter: cacheSetter,
+		caсheGetter: cacheGetter,
 	})
 }
 
@@ -41,7 +44,7 @@ type Home interface {
 }
 
 type cacheGetter interface {
-	Get(key string) (string, string)
+	Get(key string) (string, string, error)
 }
 
 type cacheSetter interface {
@@ -54,14 +57,25 @@ func (s *serverAPI) AuthCheck(ctx context.Context) (string, string, error) {
 		return "", "", status.Error(codes.Unauthenticated, "access token not found")
 	}
 
+	uid, err := jwt.IdFromJWT(reqToken)
+	if err != nil {
+		return "", "", status.Error(codes.Unauthenticated, "invalid token")
+	}
+
+
+	id, usertype, err := s.caсheGetter.Get(uid)
+	if err == nil {
+		return id, usertype, nil
+	}
+
 	token, err := ValidateAccessToken(reqToken)
 	if err != nil {
-		return "", "", status.Error(codes.InvalidArgument, "invalid token")
+		return "", "", status.Error(codes.Unauthenticated, "invalid token")
 	}
 
 	isValid, uid, userStatus, err := s.authClient.ValidateToken(ctx, token)
 	if err != nil {
-		return "", "", fmt.Errorf("failed to validate token: %v", err)
+		return "", "", fmt.Errorf("failed to validate token: %w", err)
 	}
 
 	if !isValid {
@@ -86,11 +100,11 @@ func ExtractAccessToken(ctx context.Context) (string, error) {
 
 func ValidateAccessToken(token string) (string, error) {
 	if token == "" {
-		return "", status.Error(codes.InvalidArgument, "invalid token")
+		return "", status.Error(codes.Unauthenticated, "invalid token")
 	}
 
 	if !strings.HasPrefix(token, BearerPrefix) {
-		return "", status.Error(codes.InvalidArgument, "invalid token")
+		return "", status.Error(codes.Unauthenticated, "invalid token")
 	}
 
 	return token, nil

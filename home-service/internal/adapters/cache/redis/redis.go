@@ -29,8 +29,8 @@ func NewRedisCache(cfg config.RedisConfig, log slog.Logger) (*RedisAdapter, erro
 	_, err := client.Ping(context.Background()).Result()
 
 	if err != nil {
-		log.Error("%s: %v", op, err)
-		return nil, fmt.Errorf("%s: %v", op, err)
+		log.Error("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return &RedisAdapter{

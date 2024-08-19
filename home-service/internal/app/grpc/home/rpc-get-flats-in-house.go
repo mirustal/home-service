@@ -13,13 +13,13 @@ import (
 func (s *serverAPI) GetFlatsInHouse(ctx context.Context, req *pb.GetFlatsInHouseRequest) (*pb.GetFlatsInHouseResponse, error) {
 	_, userType, err := s.AuthCheck(ctx)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Unauthenticated, "token not valid")
 	}
 
 	flats, err := s.home.GetFlatsInHouse(ctx, int(req.GetId()), userType)
 	fmt.Println(flats)
 	if err != nil {
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to get flats in house: %v", err))
+		return nil, status.Error(codes.Internal, "internal error")
 	}
 
 	var flatResponses []*pb.Flat

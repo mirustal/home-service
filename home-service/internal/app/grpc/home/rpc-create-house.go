@@ -13,14 +13,22 @@ import (
 )
 
 func (s *serverAPI) CreateHouse(ctx context.Context, req *pb.CreateHouseRequest) (*pb.CreateHouseResponse, error) {
+	_, userType, err := s.AuthCheck(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "token not valid")
+	}
+
+	if !IsModerator(userType) {
+		return nil, status.Error(codes.Unauthenticated, "not permission")
+	}
 
 	if err := s.validateCreateHouseRequest(req); err != nil {
-		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("invalid request: %v", err))
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("invalid request: %w", err))
 	}
 
 	house, err := s.home.CreateHouse(ctx, req.Address, int(req.Year), req.Developer)
 	if err != nil {
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to create house: %v", err))
+		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to create house: %w", err))
 	}
 
 	return &pb.CreateHouseResponse{

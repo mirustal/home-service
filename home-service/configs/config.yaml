@@ -19,3 +19,5 @@ grpc:
 
 jet:
   addres: "localhost:4222"
+  subsject: "house.1"
+  name: "subscriber"

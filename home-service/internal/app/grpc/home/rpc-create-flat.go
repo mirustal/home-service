@@ -3,7 +3,6 @@ package home
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,16 +13,16 @@ import (
 func (s *serverAPI) CreateFlat(ctx context.Context, req *pb.CreateFlatRequest) (*pb.CreateFlatResponse, error) {
 	_, _, err := s.AuthCheck(ctx)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Unauthenticated, "token not valid")
 	}
 
 	if err := s.validateCreateFlatRequest(req); err != nil {
-		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("invalid request: %v", err))
+		return nil, status.Error(codes.Unauthenticated, "invalid request")
 	}
 
 	flat, err := s.home.CreateFlat(ctx, int(req.HouseId), int(req.Price), int(req.Rooms))
 	if err != nil {
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to create flat: %v", err))
+		return nil, status.Error(codes.Internal, "fail createFlat")
 	}
 
 	return &pb.CreateFlatResponse{

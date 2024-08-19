@@ -11,20 +11,19 @@ import (
 )
 
 func (s *serverAPI) UpdateFlat(ctx context.Context, req *pb.UpdateFlatRequest) (*pb.UpdateFlatResponse, error) {
-	op := "internal.app.grpc.home.UpdateFlat"
 	_, userType, err := s.AuthCheck(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %v", op, err)
+		return nil, status.Error(codes.Unauthenticated, "token not valid")
 	}
 
 	if !IsModerator(userType) {
-		return nil, fmt.Errorf("%s: %v", op, err)
+		return nil, status.Error(codes.Unauthenticated, "not permission")
 	}
 
 	statusStr := req.GetStatus()
 	flat, err := s.home.UpdateFlat(ctx, int(req.GetId()), statusStr)
 	if err != nil {
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to update flat: %v", err))
+		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to update flat: %w", err))
 	}
 
 	return &pb.UpdateFlatResponse{

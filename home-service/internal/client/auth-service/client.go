@@ -26,7 +26,7 @@ func NewAuthClient(address string) (AuthClient, error) {
 	op := "internal.client.Auth.NewAuthClient"
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		return nil, fmt.Errorf("%s, %v", op, err)
+		return nil, fmt.Errorf("%s, %w", op, err)
 	}
 	client := pb.NewAuthClient(conn)
 	return &authClient{client: client}, nil
@@ -38,7 +38,7 @@ func (c *authClient) ValidateToken(ctx context.Context, token string) (bool, str
 	validateReq := &pb.ValidateRequest{AccessToken: token}
 	validateResp, err := c.client.ValidateSession(ctx, validateReq)
 	if err != nil {
-		return false, "", "", fmt.Errorf("%s, %v", op, err)
+		return false, "", "", fmt.Errorf("%s, %w", op, err)
 	}
 	return validateResp.GetIsValid(), validateResp.GetUid(), validateResp.GetUserType(), nil
 }

@@ -24,6 +24,8 @@ type GRPCConfig struct {
 
 type JetConfig struct {
 	Address string `yaml:"address"`
+	Subject string `yaml:"subsject"`
+	Name string `yaml:"name"`
 }
 
 type RedisConfig struct {
@@ -55,7 +57,7 @@ func LoadConfig(fileName, fileType string) (*Config, error) {
 	}
 	err := v.Unmarshal(&cfg)
 	if err != nil {
-		log.Printf("Unable to decode into struct, %v", err)
+		log.Printf("Unable to decode into struct, %w", err)
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			return nil, errors.New("config file not found")
 		}

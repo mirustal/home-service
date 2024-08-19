@@ -92,7 +92,7 @@ func (pg *DbPostgres) UpdateFlatStatus(ctx context.Context, flatID int, status s
 
 	tx, err := pg.db.Begin(ctx)
 	if err != nil {
-		pg.log.Error("%s: %v", op, err)
+		pg.log.Error("%s: %w", op, err)
 		return flat, fmt.Errorf("failed to begin tx: %w", err)
 	}
 	defer tx.Rollback(ctx)
@@ -114,12 +114,12 @@ func (pg *DbPostgres) UpdateFlatStatus(ctx context.Context, flatID int, status s
 		&flat.UpdatedAt,
 	)
 	if err != nil {
-		pg.log.Error("%s: %v", op, err)
+		pg.log.Error("%s: %w", op, err)
 		return flat, fmt.Errorf("failed to update flat status: %w", err)
 	}
 
 	if err := tx.Commit(ctx); err != nil {
-		pg.log.Error("%s: %v", op, err)
+		pg.log.Error("%s: %w", op, err)
 		return flat, fmt.Errorf("failed to commit tx: %w", err)
 	}
 
