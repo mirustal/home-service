@@ -16,6 +16,10 @@
 
 В данном репозитории представлена реализация тестового задания для Backend Bootcamp. Реализация полностью соответствует предоставленному API и выполнена с использованием `grpc-gateway`.
 
+**port gateway: 8080**
+**port swagger: 8081/auth/**
+**port swagger: 8081/home/**
+
 ## Архитектура
 
 ![Снимок экрана 2024-08-19 в 23 17 12](https://github.com/user-attachments/assets/f7141fa8-c12e-4321-a20d-6a45c3b15ec2)

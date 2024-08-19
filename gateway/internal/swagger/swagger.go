@@ -4,6 +4,7 @@ import (
 	stlog "log"
 	"log/slog"
 	"net/http"
+	"path/filepath"
 	"sync"
 
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -25,17 +26,18 @@ func InitSwagger(wg *sync.WaitGroup, log *slog.Logger) {
 	}
 
 	for key, dir := range swaggerDirs {
+		swaggerPath := filepath.Join(dir, "swagger.json")
 
-		log.Info(key)
-		log.Info(dir)
-		router.HandleFunc("swagger/"+key+"/swagger.json", func(w http.ResponseWriter, r *http.Request) {
-			http.ServeFile(w, r, "docs/swagger.json")
-		})
+		router.HandleFunc("/swagger/"+key+"/swagger.json", func(path string) http.HandlerFunc {
+			return func(w http.ResponseWriter, r *http.Request) {
+				http.ServeFile(w, r, path)
+			}
+		}(swaggerPath))
 
 		router.Handle("/swagger/"+key+"/", httpSwagger.Handler(
 			httpSwagger.URL("/swagger/"+key+"/swagger.json"),
 		))
 	}
 
-	stlog.Fatal(http.ListenAndServe(":8082", router))
+	stlog.Fatal(http.ListenAndServe(":8081", router))
 }
