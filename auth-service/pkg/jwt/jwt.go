@@ -9,8 +9,7 @@ import (
 	"auth-service/internal/models"
 )
 
-
-func NewToken(user models.User,  signingKey []byte, duration time.Duration) (string, error) {
+func NewToken(user models.User, signingKey []byte, duration time.Duration) (string, error) {
 	op := "jwt.NewToken"
 	token := jwt.New(jwt.SigningMethodHS256)
 
@@ -21,7 +20,7 @@ func NewToken(user models.User,  signingKey []byte, duration time.Duration) (str
 	claims["user_type"] = user.Type
 	tokenString, err := token.SignedString(signingKey)
 	if err != nil {
-		return "", fmt.Errorf("%s: %v", op, err)
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	return tokenString, nil
@@ -37,7 +36,7 @@ func NewRefreshToken(lastChar string, signingKey []byte, ttl time.Duration) (ref
 
 	refreshToken, err = token.SignedString(signingKey)
 	if err != nil {
-		return "", fmt.Errorf("%s: %v", op, err)
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	return refreshToken, nil
@@ -46,15 +45,15 @@ func NewRefreshToken(lastChar string, signingKey []byte, ttl time.Duration) (ref
 func ValidateToken(accessToken string, signingKey []byte) (bool, string, string, error) {
 	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %w", token.Header["alg"])
 		}
 		return signingKey, nil
 	})
 	if err != nil {
+
 		return false, "", "", err
 	}
 
-	// Проверка и извлечение UID из токена
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		uidString, ok := claims["uid"].(string)
 		if !ok {
@@ -79,7 +78,7 @@ func CheckRefreshToken(refreshToken, accessToken string, signingKey []byte) erro
 
 	token, err := jwt.Parse(refreshToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %w", token.Header["alg"])
 		}
 		return signingKey, nil
 	})
@@ -108,7 +107,7 @@ func IdFromJWT(accessToken string) (uid string, err error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
-		uid, ok := claims["uid"] 
+		uid, ok := claims["uid"]
 		if !ok {
 			return "", fmt.Errorf("uid must be a string, got %T", claims["uid"]) // Создаем новую ошибку, которая объясняет проблему
 		}

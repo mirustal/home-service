@@ -15,7 +15,7 @@ type DBConfig struct {
 	User     string `yaml:"user"`
 	Password string `yaml:"password"`
 	Name     string `yaml:"name"`
-	Maxconn int `yaml:"maxconn`
+	Maxconn  int    `yaml:"maxconn`
 }
 
 type GRPCConfig struct {
@@ -43,7 +43,7 @@ func LoadConfigYAML(fileName, fileType string) (*Config, error) {
 	}
 	err := v.Unmarshal(&cfg)
 	if err != nil {
-		log.Printf("Unable to decode into struct, %v", err)
+		log.Printf("Unable to decode into struct, %w", err)
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			return nil, errors.New("config file not found")
 		}
@@ -53,7 +53,7 @@ func LoadConfigYAML(fileName, fileType string) (*Config, error) {
 	return cfg, nil
 }
 
-func LoadENV(fileName, fileType string) (error) {
+func LoadENV(fileName, fileType string) error {
 	v := viper.New()
 	v.SetConfigType(fileType)
 	v.SetConfigName(fileName)
