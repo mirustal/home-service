@@ -3,7 +3,6 @@ package grpcauth
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -15,7 +14,7 @@ import (
 func (s *serverAPI) Login(ctx context.Context, req *authgrpc.LoginRequest) (*authgrpc.LoginResponse, error) {
 	userid, pass, err := validateLogin(req)
 	if pass == "" {
-		return nil, status.Error(codes.InvalidArgument, "pass is required")
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
 	token, err := s.auth.Login(ctx, userid, pass)
@@ -24,7 +23,7 @@ func (s *serverAPI) Login(ctx context.Context, req *authgrpc.LoginRequest) (*aut
 			return nil, status.Error(codes.InvalidArgument, "invalid userid or password")
 		}
 
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to login: %w", err))
+		return nil, status.Error(codes.Internal, "failed to login")
 	}
 
 	return &authgrpc.LoginResponse{

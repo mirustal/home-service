@@ -3,7 +3,6 @@ package home
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"google.golang.org/grpc/codes"
@@ -23,12 +22,12 @@ func (s *serverAPI) CreateHouse(ctx context.Context, req *pb.CreateHouseRequest)
 	}
 
 	if err := s.validateCreateHouseRequest(req); err != nil {
-		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("invalid request: %w", err))
+		return nil, status.Error(codes.InvalidArgument, "request not valid")
 	}
 
 	house, err := s.home.CreateHouse(ctx, req.Address, int(req.Year), req.Developer)
 	if err != nil {
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to create house: %w", err))
+		return nil, status.Error(codes.Internal, "internal error")
 	}
 
 	return &pb.CreateHouseResponse{

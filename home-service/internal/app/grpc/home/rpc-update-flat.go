@@ -2,7 +2,6 @@ package home
 
 import (
 	"context"
-	"fmt"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -23,7 +22,7 @@ func (s *serverAPI) UpdateFlat(ctx context.Context, req *pb.UpdateFlatRequest) (
 	statusStr := req.GetStatus()
 	flat, err := s.home.UpdateFlat(ctx, int(req.GetId()), statusStr)
 	if err != nil {
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to update flat: %w", err))
+		return nil, status.Error(codes.Internal, "internal error")
 	}
 
 	return &pb.UpdateFlatResponse{

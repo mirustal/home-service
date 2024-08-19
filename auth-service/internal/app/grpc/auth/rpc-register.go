@@ -15,7 +15,7 @@ import (
 func (s *serverAPI) Register(ctx context.Context, req *authgrpc.RegisterRequest) (*authgrpc.RegisterResponse, error) {
 	email, pass, userType, err := validateRegister(req)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("%w", err))
+		return nil, status.Error(codes.InvalidArgument, "validate error")
 	}
 
 	userid, err := s.auth.Register(ctx, email, pass, userType)
