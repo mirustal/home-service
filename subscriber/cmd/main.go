@@ -17,18 +17,18 @@ import (
 func main() {
 	cfg, err := config.LoadConfig("config", "yaml")
 	if err != nil {
-		log.Fatalf("fail load config: %w", err)
+		log.Fatalf("fail load config: %v", err)
 	}
 
 	nc, err := broker.New(cfg.Jet)
 	if err != nil {
-		log.Fatalf("fail connect nats: %w", err)
+		log.Fatalf("fail connect nats: %v", err)
 	}
 	defer nc.Close()
 
 	send := sender.New()
 	if err != nil {
-		log.Fatalf("Error init sender: %s", err)
+		log.Fatalf("Error init sender: %v", err)
 	}
 
 	subject := "house.1.new"
@@ -38,7 +38,7 @@ func main() {
 	})
 
 	if err != nil {
-		log.Fatalf("Error subscribing to subject %s: %w", subject, err)
+		log.Fatalf("Error subscribing to subject %s: %v", subject, err)
 	}
 
 	c := make(chan os.Signal, 1)

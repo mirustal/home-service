@@ -31,7 +31,7 @@ func LoadConfig(fileName, fileType string) (*Config, error) {
 	}
 	err := v.Unmarshal(&cfg)
 	if err != nil {
-		log.Printf("Unable to decode into struct, %w", err)
+		log.Printf("Unable to decode into struct, %v", err)
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			return nil, errors.New("config file not found")
 		}

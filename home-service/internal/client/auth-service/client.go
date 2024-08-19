@@ -10,17 +10,17 @@ import (
 	"home-service/pkg/pb"
 )
 
-// AuthClient интерфейс для клиента авторизации
+
+//go:generate go run github.com/vektra/mockery/v2@latest --name=Home --with-expecter=true
 type AuthClient interface {
 	ValidateToken(ctx context.Context, token string) (bool, string, string, error)
 }
 
-// authClient реализация интерфейса AuthClient
+//go:generate go run github.com/vektra/mockery/v2@latest --name=Home --with-expecter=true
 type authClient struct {
 	client pb.AuthClient
 }
 
-// NewAuthClient создает новый клиент авторизации
 func NewAuthClient(address string) (AuthClient, error) {
 	fmt.Println(address)
 	op := "internal.client.Auth.NewAuthClient"
@@ -32,7 +32,6 @@ func NewAuthClient(address string) (AuthClient, error) {
 	return &authClient{client: client}, nil
 }
 
-// ValidateToken выполняет валидацию токена через сервис авторизации
 func (c *authClient) ValidateToken(ctx context.Context, token string) (bool, string, string, error) {
 	op := "internal.client.Auth.ValidateToken"
 	validateReq := &pb.ValidateRequest{AccessToken: token}

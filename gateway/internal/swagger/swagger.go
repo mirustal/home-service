@@ -4,15 +4,14 @@ import (
 	stlog "log"
 	"log/slog"
 	"net/http"
-	"path/filepath"
 	"sync"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 const (
-	auth         = "pkg/pb/api/auth"
-	personalinfo = "pkg/pb/api/personalinfo"
+	auth = "pkg/pb/api/auth"
+	home = "pkg/pb/api/home"
 )
 
 func InitSwagger(wg *sync.WaitGroup, log *slog.Logger) {
@@ -20,23 +19,18 @@ func InitSwagger(wg *sync.WaitGroup, log *slog.Logger) {
 
 	router := http.NewServeMux()
 
-
 	swaggerDirs := map[string]string{
-		"authService":         auth,
-		"personalInfoService": personalinfo,
+		"auth": auth,
+		"home": home,
 	}
 
-
 	for key, dir := range swaggerDirs {
-		swaggerPath := filepath.Join(dir, "swagger.json")
 
-
-		router.HandleFunc("/swagger/"+key+"/swagger.json", func(path string) http.HandlerFunc {
-			return func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, path)
-			}
-		}(swaggerPath))
-
+		log.Info(key)
+		log.Info(dir)
+		router.HandleFunc("swagger/"+key+"/swagger.json", func(w http.ResponseWriter, r *http.Request) {
+			http.ServeFile(w, r, "docs/swagger.json")
+		})
 
 		router.Handle("/swagger/"+key+"/", httpSwagger.Handler(
 			httpSwagger.URL("/swagger/"+key+"/swagger.json"),

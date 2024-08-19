@@ -23,7 +23,7 @@ func (s *serverAPI) DummyLogin(ctx context.Context, req *authgrpc.DummyLoginRequ
 
 	token, err := s.auth.DummyLogin(ctx, userType.String())
 	if err != nil {
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to login: %w", err))
+		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to login: %v", err))
 	}
 
 	return &authgrpc.DummyLoginResponse{

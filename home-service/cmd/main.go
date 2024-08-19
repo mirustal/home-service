@@ -23,6 +23,8 @@ func main() {
 
 	logger := logger.LogInit(cfg.ModeLog)
 
+
+
 	db, err := postgres.New(context.Background(), cfg.PostgresDB, logger.Log)
 	if err != nil {
 		log.Fatal("db not init: %w", err)
@@ -35,7 +37,7 @@ func main() {
 
 	jsClient, err := jetctl.NewClient(*cfg.Jet)
 	if err != nil {
-		log.Fatalf("jetstream not init: %w", err)
+		log.Fatalf("jetstream not init: %v", err)
 	}
 
 	app := app.New(logger.Log, cfg.GRPC, db, jsClient, redisA)

@@ -22,7 +22,7 @@ func New(log *slog.Logger, cfg *config.GRPCConfig, db *postgres.DbPostgres, jt *
 
 	authClient, err := authclient.NewAuthClient(cfg.AuthAddress)
 	if err != nil {
-		logs.Fatalf("failed to create auth client: %w", err)
+		logs.Fatalf("failed to create auth client: %v", err)
 	}
 
 	grpcApp := grpc.New(log, authClient, homeService, cfg, cache)

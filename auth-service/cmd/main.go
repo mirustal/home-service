@@ -16,12 +16,12 @@ import (
 func main() {
 	cfg, err := config.LoadConfigYAML("config", "yaml")
 	if err != nil {
-		log.Fatalf("fail load config: %w", err)
+		log.Fatalf("fail load config: %v", err)
 	}
 
 	err = config.LoadENV("local", "env")
 	if err != nil {
-		log.Fatalf("fail load config: %w", err)
+		log.Fatalf("fail load config: %v", err)
 	}
 
 	logger := logger.LogInit(cfg.ModeLog)

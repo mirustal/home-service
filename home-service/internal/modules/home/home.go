@@ -46,47 +46,47 @@ func New(
 	}
 }
 
-//go:generate go run github.com/vektra/mockery/v2@latest --name=UserRegister --with-expecter=true
+//go:generate go run github.com/vektra/mockery/v2@latest --name=HouseCreater --with-expecter=true
 type HouseCreater interface {
 	CreateHouse(ctx context.Context, address string, year int, developer string) (int, error)
 }
 
-//go:generate go run github.com/vektra/mockery/v2@latest --name=UserRegister --with-expecter=true
+//go:generate go run github.com/vektra/mockery/v2@latest --name=HouseGetter --with-expecter=true
 type HouseGetter interface {
 	GetHouse(ctx context.Context, houseID int) (models.House, error)
 }
 
-//go:generate go run github.com/vektra/mockery/v2@latest --name=UserRegister --with-expecter=true
+//go:generate go run github.com/vektra/mockery/v2@latest --name=HouseSubscriber --with-expecter=true
 type HouseSubscriber interface {
 	SubscribeToHouse(ctx context.Context, houseID int, email string) (int, error)
 }
 
-//go:generate go run github.com/vektra/mockery/v2@latest --name=UserRegister --with-expecter=true
+//go:generate go run github.com/vektra/mockery/v2@latest --name=FlatCreater --with-expecter=true
 type FlatCreater interface {
 	CreateFlat(ctx context.Context, houseID, price, rooms int) (int, error)
 }
 
-//go:generate go run github.com/vektra/mockery/v2@latest --name=UserRegister --with-expecter=true
+//go:generate go run github.com/vektra/mockery/v2@latest --name=FlatGetter --with-expecter=true
 type FlatGetter interface {
 	GetFlatByID(ctx context.Context, flatID int) (models.Flat, error)
 }
 
-//go:generate go run github.com/vektra/mockery/v2@latest --name=UserRegister --with-expecter=true
+//go:generate go run github.com/vektra/mockery/v2@latest --name=FlatsStatusUpdater --with-expecter=true
 type FlatsStatusUpdater interface {
 	UpdateFlatStatus(ctx context.Context, flatID int, status string) (models.Flat, error)
 }
 
-//go:generate go run github.com/vektra/mockery/v2@latest --name=UserRegister --with-expecter=true
+//go:generate go run github.com/vektra/mockery/v2@latest --name=FlatsByHouseGetter --with-expecter=true
 type FlatsByHouseGetter interface {
 	GetFlatsByHouseID(ctx context.Context, houseID int, includeAll bool) ([]models.Flat, error)
 }
 
-//go:generate go run github.com/vektra/mockery/v2@latest --name=UserRegister --with-expecter=true
+//go:generate go run github.com/vektra/mockery/v2@latest --name=GetSubscriber --with-expecter=true
 type GetSubscriber interface {
 	GetSubscribers(ctx context.Context, houseID int) ([]string, error)
 }
 
-//go:generate go run github.com/vektra/mockery/v2@latest --name=UserRegister --with-expecter=true
+//go:generate go run github.com/vektra/mockery/v2@latest --name=jetPusher --with-expecter=true
 type jetPusher interface {
 	Publish(subsject string, message []byte) error
 }
