@@ -118,5 +118,3 @@ func TestAuth_DummyLogin(t *testing.T) {
 		assert.NotEmpty(t, token)
 	})
 }
-
-

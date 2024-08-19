@@ -25,9 +25,9 @@ type Auth struct {
 
 func New(log *slog.Logger, userSave UserRegister, userProvider UserGetter, refreshTokenSavver RefreshTokenSaver) *Auth {
 	return &Auth{
-		log:          log,
-		userSaver:    userSave,
-		userProvider: userProvider,
+		log:               log,
+		userSaver:         userSave,
+		userProvider:      userProvider,
 		refreshTokenSaver: refreshTokenSavver,
 	}
 }
@@ -53,8 +53,6 @@ type UserGetter interface {
 	GetUser(ctx context.Context, userID string) (models.User, error)
 }
 
-
-
 func (a *Auth) Login(ctx context.Context, userid string, password string) (string, error) {
 	const op = "internal.services.auth.Login"
 	log := a.log.With(
@@ -64,22 +62,22 @@ func (a *Auth) Login(ctx context.Context, userid string, password string) (strin
 	if err != nil {
 		if errors.Is(err, dbErr.ErrUserNotFound) {
 			log.Warn("user not found")
-			return "", fmt.Errorf("%s: %v", op, err)
+			return "", fmt.Errorf("%s: %w", op, err)
 		}
 
 		log.Error("failed to get user")
-		return "", fmt.Errorf("%s: %v", op, err)
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	if err := bcrypt.CompareHashAndPassword(user.HashPass, []byte(password)); err != nil {
 		log.Warn("password incorrect")
-		return "", fmt.Errorf("%s: %v", op, err)
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	accessToken, err := jwt.NewToken(user, []byte(secret_key), time.Hour)
 	if err != nil {
 		log.Error("failed to generated token")
-		return "", fmt.Errorf("%s: %v", op, err)
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 	fmt.Println(accessToken)
 	lastChar := accessToken[len(accessToken)-6:]
@@ -92,7 +90,7 @@ func (a *Auth) Login(ctx context.Context, userid string, password string) (strin
 	}
 	fmt.Println(refreshToken)
 
-	if err := a.refreshTokenSaver.SaveRefreshToken(context.Background(),refreshToken, user.ID); err != nil {
+	if err := a.refreshTokenSaver.SaveRefreshToken(context.Background(), refreshToken, user.ID); err != nil {
 		a.log.Error("failed to save refresh token", err)
 	}
 
@@ -113,7 +111,7 @@ func (a *Auth) DummyLogin(ctx context.Context, userType string) (string, error) 
 	token, err := jwt.NewToken(user, []byte(secret_key), time.Hour)
 	if err != nil {
 		log.Error("failed to generated token")
-		return "", fmt.Errorf("%s: %v", op, err)
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	log.Info("user logged in successful")
@@ -129,18 +127,18 @@ func (a *Auth) Register(ctx context.Context, email string, pass string, userType
 	passHash, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.MinCost)
 	if err != nil {
 		log.Error("failed to generate password ")
-		return "", fmt.Errorf("%s: %v", op, err)
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	uuid, err := a.userSaver.SaveUser(context.Background(), email, passHash, userType)
 	if err != nil {
 		if errors.Is(err, dbErr.ErrUserExists) {
 			log.Warn("user Exist")
-			return "", fmt.Errorf("%s: %v", op, err)
+			return "", fmt.Errorf("%s: %w", op, err)
 		}
 
 		log.Error("failed to save user in database")
-		return "", fmt.Errorf("%s: %v", op, err)
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	log.Info("User register")
@@ -163,7 +161,7 @@ func (a *Auth) RefreshSession(ctx context.Context, refreshToken string, accessTo
 	uid, err := jwt.IdFromJWT(accessToken)
 	if err != nil {
 		log.Error("failed to extract uid from token")
-		return "", "", fmt.Errorf("%s: %v", op, err)
+		return "", "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	err = a.refreshTokenChecker.CheckRefreshToken(refreshToken)

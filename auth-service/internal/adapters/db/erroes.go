@@ -3,8 +3,8 @@ package dbErr
 import "errors"
 
 var (
-	ErrUserExists   = errors.New("user already exists")
-	ErrUserNotFound = errors.New("user not found")
-	ErrAppNotFound  = errors.New("app not found")
+	ErrUserExists          = errors.New("user already exists")
+	ErrUserNotFound        = errors.New("user not found")
+	ErrAppNotFound         = errors.New("app not found")
 	ErrInvalidRefreshToken = errors.New("invalid refresh token")
 )

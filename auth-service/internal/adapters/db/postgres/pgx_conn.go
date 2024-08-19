@@ -28,8 +28,13 @@ func New(ctx context.Context, cfg *config.DBConfig, log *slog.Logger) (*DbPostgr
 	var pgOnce sync.Once
 
 	pgOnce.Do(func() {
-		var db *pgxpool.Pool
-		db, err = pgxpool.New(ctx, connString)
+		config, err := pgxpool.ParseConfig(connString)
+		if err != nil {
+			log.Warn("config err")
+		}
+
+		config.MaxConns = int32(cfg.Maxconn)
+		db, err := pgxpool.NewWithConfig(context.Background(), config)
 		if err == nil {
 			pgInstance = &DbPostgres{
 				db:  db,

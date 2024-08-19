@@ -86,7 +86,6 @@ func (pg *DbPostgres) SaveUser(ctx context.Context, email string, passHash []byt
 func (pg *DbPostgres) SaveRefreshToken(ctx context.Context, refreshToken string, uid string) error {
 	const op = "postgres.SaveRefreshToken"
 
-
 	tx, err := pg.db.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
