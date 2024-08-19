@@ -24,15 +24,15 @@ jobs:
         go-version: 1.22.4
 
     - name: Install dependencies
-      run: go mod tidy
+      run: cd home-service && go mod tidy
 
     - name: Run tests
-      run: go test ./... -v
+      run: cd home-service && go test ./... -v
 
     - name: Generate test coverage report
-      run: go test ./... -coverprofile=coverage.out
+      run: cd home-service && go test ./... -coverprofile=coverage.out
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
-        file: ./coverage.out
+        file: home-service/coverage.out
