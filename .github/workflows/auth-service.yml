@@ -27,7 +27,7 @@ jobs:
       run: go mod tidy
 
     - name: Run tests
-      run: go test ./... -v
+      run: go test ./auth-service/... -v
 
     - name: Generate test coverage report
       run: go test ./... -coverprofile=coverage.out
