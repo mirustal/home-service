@@ -31,8 +31,12 @@ jobs:
 
     - name: Generate test coverage report
       run: cd auth-service && go test ./... -coverprofile=coverage.txt
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      
+    - name: Upload coverage to codecov
+      uses: codecov/codecov-action@v2
       with:
-        file: auth-service/coverage.out
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./auth-service/coverage.txt
+        verbose: true
+
+
