@@ -96,7 +96,9 @@ func (pg *DbPostgres) UpdateFlatStatus(ctx context.Context, flatID int, status s
 		return flat, fmt.Errorf("failed to begin tx: %w", err)
 	}
 	defer tx.Rollback(ctx)
-
+	if status == "on_moderation"{
+		status = "on moderation"
+	}
 	query := `
 		UPDATE flats
 		SET status = $1, updated_at = NOW()

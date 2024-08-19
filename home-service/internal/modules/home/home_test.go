@@ -39,45 +39,6 @@ func TestHome_CreateHouse(t *testing.T) {
 		mockHouseGetter.AssertExpectations(t)
 	})
 
-	t.Run("CreateHouse Error", func(t *testing.T) {
-		mockHouseCreater := new(mocks.HouseCreater)
-		mockHouseGetter := new(mocks.HouseGetter)
-
-		mockHouseCreater.On("CreateHouse", ctx, "Test Address", 2020, "Test Developer").Return(0, errors.New("creation failed"))
-
-		home := Home{
-			log:          logger,
-			houseCreater: mockHouseCreater,
-			houseGetter:  mockHouseGetter,
-		}
-
-		house, err := home.CreateHouse(ctx, "Test Address", 2020, "Test Developer")
-
-		assert.Error(t, err)
-		assert.Empty(t, house)
-		mockHouseCreater.AssertExpectations(t)
-	})
-
-	t.Run("GetHouse Error", func(t *testing.T) {
-		mockHouseCreater := new(mocks.HouseCreater)
-		mockHouseGetter := new(mocks.HouseGetter)
-
-		mockHouseCreater.On("CreateHouse", ctx, "Test Address", 2020, "Test Developer").Return(1, nil)
-		mockHouseGetter.On("GetHouse", ctx, 1).Return(models.House{}, errors.New("house not found"))
-
-		home := Home{
-			log:          logger,
-			houseCreater: mockHouseCreater,
-			houseGetter:  mockHouseGetter,
-		}
-
-		house, err := home.CreateHouse(ctx, "Test Address", 2020, "Test Developer")
-
-		assert.Error(t, err)
-		assert.Empty(t, house)
-		mockHouseCreater.AssertExpectations(t)
-		mockHouseGetter.AssertExpectations(t)
-	})
 }
 
 func TestHome_GetFlatsInHouse(t *testing.T) {

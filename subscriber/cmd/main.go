@@ -9,9 +9,9 @@ import (
 
 	"github.com/nats-io/nats.go"
 
-	"subscriber/internal/adapters/broker"
-	"subscriber/internal/modules/sender"
-	"subscriber/pkg/config"
+	"sender-service/internal/adapters/broker"
+	"sender-service/internal/modules/sender"
+	"sender-service/pkg/config"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 		log.Fatalf("fail connect nats: %w", err)
 	}
 	defer nc.Close()
-	
+
 	send := sender.New()
 	if err != nil {
 		log.Fatalf("Error init sender: %s", err)

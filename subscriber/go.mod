@@ -1,4 +1,4 @@
-module subscriber
+module sender-service
 
 go 1.22.4
 
