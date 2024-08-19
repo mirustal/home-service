@@ -1,16 +1,5 @@
 version: "3.8"
 services:
-
-  # home-service:
-  #   build: ./
-  #   container_name: app-instance
-  #   ports:
-  #     - "8081:8081"
-  #   depends_on:
-  #     - postgres
-  #   networks:
-  #     - app-tier
-
   postgres:
     container_name: postgres
     image: postgres:14.8-alpine3.18
