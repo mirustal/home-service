@@ -15,6 +15,7 @@ type DBConfig struct {
 	User     string `yaml:"user"`
 	Password string `yaml:"password"`
 	Name     string `yaml:"name"`
+	Maxconn int `yaml:"maxconn`
 }
 
 type GRPCConfig struct {

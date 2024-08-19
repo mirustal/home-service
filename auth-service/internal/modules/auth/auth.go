@@ -32,21 +32,28 @@ func New(log *slog.Logger, userSave UserRegister, userProvider UserGetter, refre
 	}
 }
 
+//go:generate go run github.com/vektra/mockery/v2@latest --name=UserRegister --with-expecter=true
 type UserRegister interface {
 	SaveUser(ctx context.Context, email string, hashPass []byte, userType string) (uuid string, err error)
 }
 
+//go:generate go run github.com/vektra/mockery/v2@latest --name=RefreshTokenSaver --with-expecter=true
 type RefreshTokenSaver interface {
 	SaveRefreshToken(ctx context.Context, refreshToken string, uid string) error
 }
+
+//go:generate go run github.com/vektra/mockery/v2@latest --name=RefreshTokenChecker --with-expecter=true
 
 type RefreshTokenChecker interface {
 	CheckRefreshToken(refreshToken string) error
 }
 
+//go:generate go run github.com/vektra/mockery/v2@latest --name=UserGetter --with-expecter=true
 type UserGetter interface {
 	GetUser(ctx context.Context, userID string) (models.User, error)
 }
+
+
 
 func (a *Auth) Login(ctx context.Context, userid string, password string) (string, error) {
 	const op = "internal.services.auth.Login"
@@ -154,6 +161,10 @@ func (a *Auth) RefreshSession(ctx context.Context, refreshToken string, accessTo
 	}
 
 	uid, err := jwt.IdFromJWT(accessToken)
+	if err != nil {
+		log.Error("failed to extract uid from token")
+		return "", "", fmt.Errorf("%s: %v", op, err)
+	}
 
 	err = a.refreshTokenChecker.CheckRefreshToken(refreshToken)
 	if err != nil {
