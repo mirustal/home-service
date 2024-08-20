@@ -13,23 +13,28 @@
 ## Запуск сервиса
 
 ### Make
-  1. make up-d - запустит контейнеры на фоне
-  1. make up-b - запустит контейнеры
+    1. make up-d - запустит контейнеры на фоне
+    1. make up-b - запустит контейнеры
 
 ### Docker-compose 
-  docker-compose up -d | docker-compose up --build
+    docker-compose up -d | docker-compose up --build
 
 
 ## Описание
-В данном репозитории представлена реализация тестового задания для Backend Bootcamp. Реализация полностью соответствует предоставленному API и выполнена с использованием `grpc-gateway`.
+  В данном репозитории представлена реализация тестового задания для Backend Bootcamp. 
+  
+  Реализация полностью соответствует предоставленному API и выполнена с использованием `grpc-gateway`.
 
-**port gateway: 8080**
-**port swagger: 8081/auth/**
-**port swagger: 8081/home/**
+  **port gateway: 8080**
+
+  **port swagger: 8081/auth/**
+
+  **port swagger: 8081/home/**
 
 ## Архитектура
 
-![Снимок экрана 2024-08-19 в 23 17 12](https://github.com/user-attachments/assets/f7141fa8-c12e-4321-a20d-6a45c3b15ec2)
+![Снимок экрана 2024-08-20 в 03 11 33](https://github.com/user-attachments/assets/a62db79a-4bc1-4a49-b6c5-db4fb5892f82)
+
 
 Реализация состоит из следующих сервисов:
 
