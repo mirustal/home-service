@@ -2,7 +2,7 @@ modelog: debug
 serverport: 8081
 
 db:
-  host: "0.0.0.0"
+  host: "postgres"
   port: 5432
   user: "admin"
   password: "admin"
@@ -11,3 +11,6 @@ db:
 
 grpc:
   port: 9001
+
+
+

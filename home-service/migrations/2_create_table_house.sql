@@ -34,7 +34,7 @@ CREATE TABLE subscriptions (
 CREATE TABLE moderations (
     id SERIAL PRIMARY KEY,
     flat_id INT REFERENCES flats(id) ON DELETE CASCADE,
-    moderator_id UUID REFERENCES users(id),
+    moderator_id UUID REFERENCES users(id)
 );
 
 CREATE INDEX idx_moderations_flat_id ON moderations (flat_id);

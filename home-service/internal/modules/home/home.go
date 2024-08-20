@@ -172,7 +172,7 @@ func (h *Home) CreateFlat(ctx context.Context, houseID int, price int, rooms int
 	}
 
 	for _, str := range subscribers {
-		err := h.jetpusher.Publish("house.1.new", []byte(str))
+		err := h.jetpusher.Publish("house", []byte(str))
 		if err != nil {
 			continue
 		}

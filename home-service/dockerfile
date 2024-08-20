@@ -16,11 +16,8 @@ WORKDIR /app
 COPY --from=builder /app/main .
 
 COPY --from=builder /app/configs/docker.yaml /app/configs/config.yaml
-COPY --from=builder /app/envs /app/envs
-COPY --from=builder /app/migrations/1_create_table_user.sql /app/migrations/1_create_table_user.sql
+COPY --from=builder /app/migrations/2_create_table_house.sql /app/migrations/2_create_table_house.sql
 
-
-EXPOSE 9001
-
+EXPOSE 9002
 
 CMD ["./main"]

@@ -37,3 +37,4 @@ func (s *serverAPI) GetFlatsInHouse(ctx context.Context, req *pb.GetFlatsInHouse
 		Flats: flatResponses,
 	}, nil
 }
+

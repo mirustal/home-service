@@ -62,7 +62,6 @@ func (s *serverAPI) AuthCheck(ctx context.Context) (string, string, error) {
 		return "", "", status.Error(codes.Unauthenticated, "invalid token")
 	}
 
-
 	id, usertype, err := s.caсheGetter.Get(uid)
 	if err == nil {
 		return id, usertype, nil

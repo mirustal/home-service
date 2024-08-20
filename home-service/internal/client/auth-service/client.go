@@ -22,7 +22,6 @@ type authClient struct {
 }
 
 func NewAuthClient(address string) (AuthClient, error) {
-	fmt.Println(address)
 	op := "internal.client.Auth.NewAuthClient"
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

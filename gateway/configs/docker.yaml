@@ -1,13 +1,15 @@
 modelog: debug
 serverport: 8081
 
+
+grpc:
+  portauth: "auth-service:9001"
+  porthomes: "home-service:9002"
+  timeout: "5s"
+
 db:
-  host: "0.0.0.0"
+  host: "postgres"
   port: 5432
   user: "admin"
   password: "admin"
   name: "home-service"
-  maxconn: 100
-
-grpc:
-  port: 9001
