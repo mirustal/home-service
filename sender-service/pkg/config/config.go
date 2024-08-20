@@ -9,7 +9,7 @@ import (
 
 type JetConfig struct {
 	Address string `yaml:"address"`
-	Subject string `yaml:"subsject"`
+	Subject string `yaml:"subject"`
 	Name    string `yaml:"name"`
 }
 

@@ -24,7 +24,6 @@ func main() {
 	logger := logger.LogInit(cfg.ModeLog)
 
 
-
 	db, err := postgres.New(context.Background(), cfg.PostgresDB, logger.Log)
 	if err != nil {
 		log.Fatal("db not init: %w", err)

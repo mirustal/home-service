@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/nats-io/nats.go"
 
@@ -15,6 +16,8 @@ import (
 )
 
 func main() {
+	time.Sleep(3 * time.Second)
+
 	cfg, err := config.LoadConfig("config", "yaml")
 	if err != nil {
 		log.Fatalf("fail load config: %v", err)
@@ -24,23 +27,36 @@ func main() {
 	if err != nil {
 		log.Fatalf("fail connect nats: %v", err)
 	}
-	defer nc.Close()
 
 	send := sender.New()
+
+	defer nc.Close()
+
 	if err != nil {
 		log.Fatalf("Error init sender: %v", err)
 	}
 
-	subject := "house.1.new"
+	subject := cfg.Jet.Subject
 	_, err = nc.Con.Subscribe(subject, func(msg *nats.Msg) {
-
-		send.SendEmail(context.Background(), string(msg.Data), "subscribe update")
+		err := send.SendEmail(context.Background(), string(msg.Data), "subscribe update")
+		if err != nil {
+			log.Printf("Failed to send email: %v", err)
+		} else {
+			log.Printf("Successfully sent email to '%s'", string(msg.Data))
+		}
 	})
+	
 
 	if err != nil {
 		log.Fatalf("Error subscribing to subject %s: %v", subject, err)
 	}
 
+	log.Println("sender-service start")
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+
+
+	<-c
+
+	log.Println("sender-service shutdown")
 }

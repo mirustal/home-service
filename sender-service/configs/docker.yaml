@@ -1,0 +1,4 @@
+jet:
+  address: "nats://nats:4222"
+  subject: "house"
+  name: "subscriber"

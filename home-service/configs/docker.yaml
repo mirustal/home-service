@@ -1,22 +1,22 @@
 modelog: debug
 
 postgresdb:
-  host: "0.0.0.0"
+  host: "postgres"
   port: 5432
   user: "admin"
   password: "admin"
   name: "home-service"
 
 redisdb:
-  host: "localhost:6379"
+  host: "redis:6379"
   port: 6379
   name: "name"
 
 grpc:
   port: 9002
-  authaddress: "localhost:9001"
+  authaddress: "auth-service:9001"
 
 jet:
-  addres: "localhost:4222"
+  address: "nats://nats:4222"
   subject: "house"
   name: "subscriber"

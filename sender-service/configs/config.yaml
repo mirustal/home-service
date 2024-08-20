@@ -1,0 +1,4 @@
+jet:
+  address: "localhost:4222"
+  subject: "house.1"
+  name: "subscriber"

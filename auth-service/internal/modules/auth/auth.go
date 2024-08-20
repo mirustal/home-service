@@ -32,6 +32,9 @@ func New(log *slog.Logger, userSave UserRegister, userProvider UserGetter, refre
 	}
 }
 
+var secret_key = os.Getenv("SECRET_KEY")
+
+
 //go:generate go run github.com/vektra/mockery/v2@latest --name=UserRegister --with-expecter=true
 type UserRegister interface {
 	SaveUser(ctx context.Context, email string, hashPass []byte, userType string) (uuid string, err error)
@@ -98,7 +101,6 @@ func (a *Auth) Login(ctx context.Context, userid string, password string) (strin
 	return accessToken, nil
 }
 
-var secret_key = os.Getenv("SECRET_KEY")
 
 func (a *Auth) DummyLogin(ctx context.Context, userType string) (string, error) {
 	const op = "internal.services.auth.dummyLogin"
